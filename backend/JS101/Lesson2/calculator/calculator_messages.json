@@ -1,0 +1,35 @@
+{
+  "en": {
+    "askLang": "What is your preferred language? (en/es)",
+    "askName": "What is your name?",
+    "invalidLang": "Invalid language choice. Please choose between English and Spanish.   (en/es)",  
+    "intro": "Welcome to the Calculator, ",
+    "invalidNum": "Hmmm...that doesn't look like a valid number.",
+    "askFirstNum": "What is the first number?",
+    "askSecondNum": "What is the second number?",
+    "askOp": "What operation would you like to perform?",
+    "opOptions": "1) Add, 2) Subtract, 3) Multiply, 4) Divide",
+    "invalidOp": "Must choose 1, 2, 3, or 4.",
+    "askDoOver": "Would you like to perform another calculation? (y/n)",
+    "invalidDoOver": "Must choose y or n",
+    "result": "The result is",
+    "exit": "Thank you for using calculator."
+  },
+
+  "es": {
+    "askLang": "Cual es tu idioma preferido?     (en/es)",
+    "askName": "como te llamas?",
+    "invalidLang": "Eleccion de idioma no valida. Por favor elija entre ingles y espanol. (en/es)",
+    "intro": "Bienvenido a la calculadora, ",
+    "invalidNum": "Hmmm... eso no parece un numero valido.",
+    "askFirstNum": "Cual es el primer numero?",
+    "askSecondNum": "Cual es el segundo numero?",
+    "askOp": "Que operacion le gustaria realizar?",
+    "opOptions": "1) Sumar, 2) Restar, 3) Multiplicar, 4) Dividir",
+    "invalidOp": "Debe elegir 1, 2, 3 o 4.",
+    "askDoOver": "Desea realizar otro calculo? (y/n)",
+    "invalidDoOver": "Debe elegir y o n",
+    "result": "El resultado es",
+    "exit": "Gracias por usar la calculadora."
+  }
+}

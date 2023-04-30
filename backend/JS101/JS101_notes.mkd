@@ -1,2 +1,46 @@
 # JS101 Notes
+***
+## Type coercions
+
+`+` : If one operand is a string, string concatenation is performed
+
+`==` : If one operand is a primitive while the other is an object, the object is converted to a primitive value with no preferred type.
+
+Objects are converted to a primitive by using `toPrimitive`, `valueOf()`, and `toString()` in that order.
+
+#### Comparing two operands of different types:
+
+`booleans` are converted to 0 and 1
+
+`null` is converted to 0
+
+`undefined` is converted to NaN
+
+strings are converted based on the values they contains, and converted to `NaN` if they do not contain numeric values
+
+**remember that the above conversions happen only when two operands of different types are being compared**
+
+***
+
+## Truthiness
+
+`let a = 3` is a statement. think of statements as lines of code that tells the program to *do something*. this statement *does something* by telling the program to assign the value of 3 to the variable a.
+
+`3` is an expression in the above example. think of expressions as something that returns a value. `3` returns a value of `3`. `5 + 3` returns a value of `8`. technically the reassignment statement `a = 3` returns a value of 3 which makes it both a statement and an expression.
+
+In logical comparisons, two expressions that return a value that evaluate to true or false are compared. Logical comparisons are expressions themselves since they return the value of the last expression to be evaluated.
+
+It is generally a good idea to always use parentheses to group expressions together so it does not confuse the reader.
+
+Think through what you are comparing and try to make comparison operators appear explicit. For example, if you are testing is a variable is an empty string, don't just assume its truthy value. Explicitly check `variable === ""`
+
+## Errors
+
+use `node inspect name.js` to enter debugger
+
+use `debugger` keyword to create breakpoints
+
+## Precedence
+
+all operators have a precedence order
 
