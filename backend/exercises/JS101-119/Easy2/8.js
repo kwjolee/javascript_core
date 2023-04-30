@@ -1,7 +1,7 @@
 function oddities(array) {
   let outArray = [];
-  for (let i = 0; i < array.length; i += 2) {
-    outArray.push(array[i]);
+  for (let idx = 0; idx < array.length; idx += 2) {
+    outArray.push(array[idx]);
   }
   return outArray;
 }
@@ -15,7 +15,7 @@ console.log(oddities([])); // logs []
 console.log("===");
 
 function evenities(array) {
-  return array.filter((el,i) => i % 2 !== 0);
+  return array.filter((elm,idx) => idx % 2 !== 0);
 }
 
 console.log(evenities([2, 3, 4, 5, 6])); // logs [3, 5]
