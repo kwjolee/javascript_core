@@ -4,7 +4,7 @@ console.clear();
 const readline = require('readline-sync');
 const CALCMESSAGES = require ('./calculator_messages.json');
 
-// set up global const - language and name
+// ask user for language
 const LANG = askLanguage();
 
 // functions
