@@ -13,6 +13,7 @@
     "askDoOver": "Would you like to perform another calculation? (y/n)",
     "invalidDoOver": "Must choose y or n",
     "result": "The result is",
+    "divZero": "Please note you are dividing by zero",
     "exit": "Thank you for using calculator."
   },
 
@@ -30,6 +31,7 @@
     "askDoOver": "Desea realizar otro calculo? (y/n)",
     "invalidDoOver": "Debe elegir y o n",
     "result": "El resultado es",
+    "divZero": "Tenga en cuenta que esta dividiendo por cero",
     "exit": "Gracias por usar la calculadora."
   }
 }

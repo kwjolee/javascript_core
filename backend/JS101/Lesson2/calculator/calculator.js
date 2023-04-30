@@ -1,3 +1,5 @@
+console.clear();
+
 // import dependencies
 const readline = require('readline-sync');
 const CALCMESSAGES = require ('./calculator_messages.json');
@@ -19,9 +21,9 @@ function invalidNumber(number) {
 // ask user for name
 function askName() {
   prompt(messages(LANG,"askName"));
-  const username = readline.question(); // accept any string
-  prompt(messages(LANG,"intro") + username + "!");
-  return username;
+  const USERNAME = readline.question(); // accept any string
+  prompt(messages(LANG,"intro") + USERNAME + "!");
+  return USERNAME;
 }
 
 // ask user for first number
@@ -90,6 +92,7 @@ function calculate(number1, number2, operation) {
       result = number1 * number2;
       break;
     case '4':
+      if (number2 === 0) prompt(messages(LANG,"divZero"));
       result = number1 / number2;
       break;
   }
