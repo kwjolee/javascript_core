@@ -2,6 +2,8 @@
 const readline = require('readline-sync');
 const CALCMESSAGES = require ('./calculator_messages.json');
 
+const LANG = askLanguage();
+
 // functions
 // show user the message
 function prompt(msg) {
@@ -48,11 +50,11 @@ function askOperation() {
 
 // ask user if another calculation is wanted
 function askDoAgain() {
-  prompt(messages(LANG,"askDoOver"));
+  prompt(messages(LANG,"askDoAgain"));
 
   let doOver = readline.question();
   while (!['y', 'n'].includes(doOver)) {
-    prompt(messages(LANG,"invalidDoOver"));
+    prompt(messages(LANG,"invalidDoAgain"));
     doOver = readline.question();
   }
   console.clear();
@@ -105,8 +107,6 @@ function messages(language, message) {
 // run Calculator
 console.clear();
 
-const LANG = askLanguage();
-
 askName();
 do {
   const number1 = askNumber("askFirstNum");
@@ -119,3 +119,4 @@ do {
 } while (askDoAgain());
 
 prompt(`${messages(LANG,"exit")}`);
+

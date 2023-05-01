@@ -10,8 +10,8 @@
     "askOp": "What operation would you like to perform?",
     "opOptions": "1) Add, 2) Subtract, 3) Multiply, 4) Divide",
     "invalidOp": "Must choose 1, 2, 3, or 4.",
-    "askDoOver": "Would you like to perform another calculation? (y/n)",
-    "invalidDoOver": "Must choose y or n",
+    "askDoAgain": "Would you like to perform another calculation? (y/n)",
+    "invalidDoAgain": "Must choose y or n",
     "result": "The result is",
     "divZero": "Please note you are dividing by zero",
     "exit": "Thank you for using calculator."
@@ -28,8 +28,8 @@
     "askOp": "Que operacion le gustaria realizar?",
     "opOptions": "1) Sumar, 2) Restar, 3) Multiplicar, 4) Dividir",
     "invalidOp": "Debe elegir 1, 2, 3 o 4.",
-    "askDoOver": "Desea realizar otro calculo? (y/n)",
-    "invalidDoOver": "Debe elegir y o n",
+    "askDoAgain": "Desea realizar otro calculo? (y/n)",
+    "invalidDoAgain": "Debe elegir y o n",
     "result": "El resultado es",
     "divZero": "Tenga en cuenta que esta dividiendo por cero",
     "exit": "Gracias por usar la calculadora."
