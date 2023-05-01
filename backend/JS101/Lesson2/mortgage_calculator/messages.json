@@ -1,0 +1,23 @@
+{
+  "invalidResponse": "Invalid entry. Please enter a valid number:",
+  "askPrincipal": "What is the loan amount?",
+  "askAPR": "What is the interest rate?",
+  "askLoanDuration": "What is the loan duration?",
+  "askDoAgain": "Would you like to do another payment calculation? (y)es/(n)o",
+  "exit": "Thank you for using Mortage Calculator.",
+  "paymentAffix": "Your monthly payment amount is",
+  "invalidRedo": "Invalid entry. Please enter (y)es or (n)o",
+  "invalidGeneral": "Invalid entry. Please try again",
+  "yourPrincipal": "For the loan amount of:",
+  "yourAPR": "With an interest rate of:",
+  "yourLoanDuration": "And a repayment period of:",
+  "noLoan": "It seems you don't have a loan.",
+  "units": {
+    "askAPR": "Would you like to enter interest rate in (p)ercentage or (d)ecimal?",
+    "askLoanDuration": "Would you like to enter loan duration in (y)ears or (m)onths?"
+  },
+  "allowedUnits": {
+    "askAPR": ["p", "percent", "percentage", "d", "decimal"],
+    "askLoanDuration": ["y", "year", "years", "m", "month", "months"]
+  }
+}
