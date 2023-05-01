@@ -1,16 +1,11 @@
-console.clear();
-
 // import dependencies
 const readline = require('readline-sync');
 const CALCMESSAGES = require ('./calculator_messages.json');
 
-// ask user for language
-const LANG = askLanguage();
-
 // functions
 // show user the message
 function prompt(msg) {
-  console.log(`=> ${msg}`);
+  console.log(`\n=> ${msg}`);
 }
 
 // check if argument is a valid number
@@ -23,32 +18,18 @@ function askName() {
   prompt(messages(LANG,"askName"));
   const USERNAME = readline.question(); // accept any string
   prompt(messages(LANG,"intro") + USERNAME + "!");
-  return USERNAME;
 }
 
-// ask user for first number
-function askFirstNumber() {
-  prompt(messages(LANG,"askFirstNum"));
-  let number1 = (readline.question());
-  while (invalidNumber(number1)) {
+// ask user for number
+function askNumber(order, LANG = "en") {
+  prompt(messages(LANG,order));
+  let number = (readline.question());
+  while (invalidNumber(number)) {
     prompt(messages(LANG,"invalidNum"));
-    number1 = readline.question();
+    number = readline.question();
   }
 
-  return Number(number1);
-}
-
-// ask user for second number
-function askSecondNumber() {
-  prompt(messages(LANG,"askSecondNum"));
-  let number2 = (readline.question());
-
-  while (invalidNumber(number2)) {
-    prompt(messages(LANG,"invalidNum"));
-    number2 = readline.question();
-  }
-
-  return Number(number2);
+  return Number(number);
 }
 
 // ask user for operation
@@ -79,7 +60,7 @@ function askDoAgain() {
 }
 
 // do calculation
-function calculate(number1, number2, operation) {
+function doCalculation(number1, number2, operation) {
   let result;
   switch (operation) {
     case '1':
@@ -122,14 +103,17 @@ function messages(language, message) {
 }
 
 // run Calculator
+console.clear();
+
+const LANG = askLanguage();
 
 askName();
 do {
-  const number1 = askFirstNumber();
-  const number2 = askSecondNumber();
+  const number1 = askNumber("askFirstNum");
+  const number2 = askNumber("askSecondNum");
   const operation = askOperation();
 
-  const output = calculate(number1, number2, operation);
+  const output = doCalculation(number1, number2, operation);
 
   prompt(`${messages(LANG,"result")} ${output}`);
 } while (askDoAgain());
