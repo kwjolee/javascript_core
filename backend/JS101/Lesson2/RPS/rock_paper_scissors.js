@@ -1,16 +1,18 @@
 const readline = require('readline-sync');
 
 const WINNING_LIST = {
-  rock: ["lizard", "scissors"],
-  paper: ["rock", "spock"],
-  scissors: ["paper", "lizard"],
-  lizard: ["lizard", "spock"],
-  spock: ["scissors", "rock"]
+  rock: {winsAgainst: ["lizard", "scissors"], shortName: "(r)ock"},
+  paper: {winsAgainst: ["rock", "spock"], shortName: "(p)aper"},
+  scissors: {winsAgainst: ["paper", "lizard"], shortName: "(sc)issors"},
+  lizard: {winsAgainst: ["lizard", "spock"], shortName: "(l)izard"},
+  spock: {winsAgainst: ["scissors", "rock"], shortName: "(sp)ock"}
 };
 
 const VALID_MOVES = Object.keys(WINNING_LIST);
+const VALID_MOVES_SHORT = VALID_MOVES.map(key => WINNING_LIST[key].shortName);
+const VALID_MOVES_FIRST = VALID_MOVES_SHORT.map(key => key.slice(1,key.lastIndexOf(")")));
 
-const BLANK_SCORES = {
+const scoreKeeper = {
   round: 1,
   You: 0,
   CPU: 0,
@@ -18,9 +20,6 @@ const BLANK_SCORES = {
   lastCPU: '',
   lastWinner: ''
 };
-
-let scoreKeeper = Object.assign({},BLANK_SCORES);
-
 
 // prompter
 function prompt(message) {
@@ -30,19 +29,22 @@ function prompt(message) {
 // ask user move
 function askUserMove() {
   prompt(`Please choose your move :`);
-  prompt(`${VALID_MOVES.join(", ")}`);
+  prompt(`${VALID_MOVES_SHORT.join(", ")}`);
   let userMove = readline.question();
   while (checkInvalidMove(userMove)) {
     prompt('That is an invalid move. Please choose again:');
-    prompt(`${VALID_MOVES.join(", ")}`);
+    prompt(`${VALID_MOVES_SHORT.join(", ")}`);
     userMove = readline.question();
   }
-  return userMove;
+  return VALID_MOVES.filter(key => key.startsWith(userMove))[0];
 }
 
 // validate user input
 function checkInvalidMove(userMove) {
-  return !VALID_MOVES.includes(userMove);
+
+  let longNotationInvalid = !VALID_MOVES.includes(userMove);
+  let shortNotationInvalid = !VALID_MOVES_FIRST.includes(userMove);
+  return longNotationInvalid && shortNotationInvalid;
 }
 
 // generate computer move
@@ -53,7 +55,7 @@ function getCPUMove() {
 
 // determine winner
 function getWinner(userMove, CPUMove) {
-  if (WINNING_LIST[userMove].includes(CPUMove)) {
+  if (WINNING_LIST[userMove].winsAgainst.includes(CPUMove)) {
     return "You";
   } else if (userMove === CPUMove) {
     return "tie";
@@ -69,19 +71,19 @@ function displayWinner() {
   let winner = scoreKeeper["lastWinner"];
   prompt(`You chose ${userMove}. Computer chose ${CPUMove}.`);
   if (winner !== "tie") {
-    prompt(`${winner} won!\n`);
+    prompt(`${winner} won the round!\n`);
   } else {
-    prompt("It's a tie game.\n");
+    prompt("It's a tie.\n");
   }
 }
 
 // ask play again
 function askReplay() {
   prompt(`${scoreKeeper["lastWinner"]} won the game!\n`);
-  prompt("Would you like to play again? (y/n)");
+  prompt("Would you like to play again? (y)es/(n)o");
   let replay = readline.question();
   while (checkInvalidYesNo(replay)) {
-    prompt("Invalid response. Would you like to play again? (y/n)");
+    prompt("Invalid response. Would you like to play again? (y)es/(n)o");
     replay = readline.question();
   }
   return replay.toLowerCase()[0] === "y";
@@ -146,9 +148,15 @@ function displayHeader(status) {
   }
 }
 
+function resetScore() {
+  scoreKeeper.round = 1;
+  scoreKeeper.CPU = 0;
+  scoreKeeper.You = 0;
+}
+
 //
 do {
-  scoreKeeper = Object.assign({},BLANK_SCORES);
+  resetScore();
   let leadScore = 0;
 
   do {
