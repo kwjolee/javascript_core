@@ -1,17 +1,17 @@
 const readline = require('readline-sync');
 const MESSAGES = require ('./messages.json');
 
-function prompt(message) {
+function showPrompt(message) {
   console.log(`\n===> ${message}\n`);
 }
 
-function askUnit(item) {
-  if (item === "askPrincipal") return "$";
-  let allowedUnits = MESSAGES["allowedUnits"][item];
-  prompt(MESSAGES["units"][item]);
+function askUnit(action) {
+  if (action === "askPrincipal") return "$";
+  const allowedUnits = MESSAGES["allowedUnits"][action];
+  showPrompt(MESSAGES["units"][action]);
   let unit = readline.question();
   while (!allowedUnits.includes(unit)) {
-    prompt(MESSAGES["invalidGeneral"]);
+    showPrompt(MESSAGES["invalidGeneral"]);
     unit = readline.question();
   }
   return convertUnits(unit);
@@ -31,34 +31,34 @@ function convertUnits(unit) {
   return unitConverted;
 }
 
-function getResponse(item) {
-  let unit = askUnit(item);
-  prompt(`${MESSAGES[item]} (${unit})`);
+function getResponse(action) {
+  const unit = askUnit(action);
+  showPrompt(`${MESSAGES[action]} (${unit})`);
   let response = readline.question();
-  while (invalidNumber(response, item)) {
-    prompt(MESSAGES["invalidResponse"]);
-    prompt(`${MESSAGES[item]} (${unit})`);
+  while (isInvalidNumber(response, action)) {
+    showPrompt(MESSAGES["invalidResponse"]);
+    showPrompt(`${MESSAGES[action]} (${unit})`);
     response = readline.question();
   }
-  return convertResponse(Number(response), item, unit);
+  return convertResponse(Number(response), action, unit);
 }
 
-function invalidNumber(numberString, item) {
+function isInvalidNumber(numberString, action) {
   if (isNaN(Number(numberString)) || (numberString === '')) {
     return true;
-  } else if (item === "askPrincipal" && Number(numberString) < 0) {
+  } else if (action === "askPrincipal" && Number(numberString) < 0) {
     return true;
-  } else if (item === "askAPR" && Number(numberString) < 0) {
+  } else if (action === "askAPR" && Number(numberString) < 0) {
     return true;
-  } else if (item === "askLoanDuration" && Number(numberString) <= 0) {
+  } else if (action === "askLoanDuration" && Number(numberString) <= 0) {
     return true;
   } else {
     return false;
   }
 }
 
-function convertResponse(response, item, unit) {
-  if (item === "askAPR") {
+function convertResponse(response, action, unit) {
+  if (action === "askAPR") {
     if (unit === "%") {
       response /= 1200;
     } else {
@@ -77,38 +77,38 @@ function calcMonthlyPay(principal, APR, loanDuration) {
 
 
 function showPaymentAmount(MonthlyPay) {
-  prompt(`${MESSAGES["paymentAffix"]} $${MonthlyPay.toFixed(2)}.`);
+  showPrompt(`${MESSAGES["paymentAffix"]} $${MonthlyPay.toFixed(2)}.`);
 }
 
 function askDoAgain() {
-  let allowedEntries = ['y', 'n', 'yes', 'no'];
-  prompt(MESSAGES["askDoAgain"]);
+  const allowedEntries = ['y', 'n', 'yes', 'no'];
+  showPrompt(MESSAGES["askDoAgain"]);
   let doAgain = readline.question().toLowerCase();
   while (!allowedEntries.includes(doAgain)) {
-    prompt(MESSAGES["invalidRedo"]);
+    showPrompt(MESSAGES["invalidRedo"]);
     doAgain = readline.question().toLowerCase();
   }
   console.clear();
   return doAgain[0] === "y";
 }
 
-function exitCalc() {
-  prompt(MESSAGES["exit"]);
+function sayBye() {
+  showPrompt(MESSAGES["exit"]);
 }
 
 //
 console.clear();
-prompt("Welcome to the Mortgage Calculator");
+showPrompt("Welcome to the Mortgage Calculator");
 
 do {
-  let principal = getResponse("askPrincipal");
+  const principal = getResponse("askPrincipal");
   if (principal === 0) {
-    prompt(MESSAGES["noLoan"]);
+    showPrompt(MESSAGES["noLoan"]);
   } else {
-    let APR = getResponse("askAPR");
-    let loanDuration = getResponse("askLoanDuration");
-    let MonthlyPay = calcMonthlyPay(principal, APR, loanDuration);
+    const APR = getResponse("askAPR");
+    const loanDuration = getResponse("askLoanDuration");
+    const MonthlyPay = calcMonthlyPay(principal, APR, loanDuration);
     showPaymentAmount(MonthlyPay);
   }
 } while (askDoAgain());
-exitCalc();
+sayBye();
