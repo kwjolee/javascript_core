@@ -1,5 +1,7 @@
 const readline = require('readline-sync');
 const MESSAGES = require ('./messages.json');
+const YEAR_TO_MONTH = 12;
+const PER_TO_DEC = 0.01;
 
 function showPrompt(message) {
   console.log(`\n===> ${message}\n`);
@@ -62,12 +64,12 @@ function isInvalidTerm(numberString, action) {
 function convertLoanTerm(response, action, unit) {
   if (action === "askAPR") {
     if (unit === "%") {
-      response /= 1200;
+      response /= (YEAR_TO_MONTH / PER_TO_DEC);
     } else {
-      response /= 12;
+      response /= YEAR_TO_MONTH;
     }
   } else if (unit === "years") {
-    response *= 12;
+    response *= YEAR_TO_MONTH;
   }
   return response;
 }
@@ -109,7 +111,7 @@ function sayBye() {
 
 //
 console.clear();
-showPrompt("Welcome to the Mortgage Calculator");
+showPrompt(MESSAGES["welcome"]);
 
 do {
   const [principal] = getLoanTerms("askPrincipal");

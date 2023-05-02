@@ -1,4 +1,5 @@
 {
+  "welcome": "Welcome to the Mortgage Calculator",
   "askPrincipal": "What is the loan amount?",
   "askAPR": "What is the interest rate?",
   "askLoanTime": "What is the loan duration?",
