@@ -75,9 +75,9 @@ function convertLoanTerm(response, action, unit) {
 }
 
 function calcMonthlyPay(fullLoanTerms) {
-  let principal = fullLoanTerms.principal;
-  let APR = convertLoanTerm(fullLoanTerms.APR[0], "askAPR", fullLoanTerms.APR[1]);
-  let loanTime = convertLoanTerm(fullLoanTerms.loanTime[0], "askLoanTime", fullLoanTerms.loanTime[1]);
+  const principal = fullLoanTerms.principal;
+  const APR = convertLoanTerm(fullLoanTerms.APR[0], "askAPR", fullLoanTerms.APR[1]);
+  const loanTime = convertLoanTerm(fullLoanTerms.loanTime[0], "askLoanTime", fullLoanTerms.loanTime[1]);
 
   if (APR === 0) return principal / loanTime;
   return principal * (APR / (1 - Math.pow((1 + APR), (-loanTime))));
