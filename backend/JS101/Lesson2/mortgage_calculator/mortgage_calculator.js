@@ -5,13 +5,14 @@ function showPrompt(message) {
   console.log(`\n===> ${message}\n`);
 }
 
-function askUnit(action) {
+function askUnits(action) {
   if (action === "askPrincipal") return "$";
   const allowedUnits = MESSAGES["allowedUnits"][action];
-  showPrompt(MESSAGES["units"][action]);
+  showPrompt(MESSAGES["askUnits"][action]);
   let unit = readline.question();
   while (!allowedUnits.includes(unit)) {
-    showPrompt(MESSAGES["invalidGeneral"]);
+    showPrompt(MESSAGES["invalidUnits"]);
+    showPrompt(MESSAGES["askUnits"][action]);
     unit = readline.question();
   }
   return convertUnits(unit);
@@ -31,33 +32,34 @@ function convertUnits(unit) {
   return unitConverted;
 }
 
-function getResponse(action) {
-  const unit = askUnit(action);
+function getLoanTerms(action) {
+  const unit = askUnits(action);
   showPrompt(`${MESSAGES[action]} (${unit})`);
   let response = readline.question();
-  while (isInvalidNumber(response, action)) {
-    showPrompt(MESSAGES["invalidResponse"]);
+  while (isInvalidTerm(response, action)) {
+    showPrompt(MESSAGES["invalidTerm"][action]);
     showPrompt(`${MESSAGES[action]} (${unit})`);
     response = readline.question();
   }
-  return convertResponse(Number(response), action, unit);
+  return [Number(response), unit];
 }
 
-function isInvalidNumber(numberString, action) {
-  if (isNaN(Number(numberString)) || (numberString === '')) {
+function isInvalidTerm(numberString, action) {
+  let term = Number(numberString);
+  if (isNaN(term) || (numberString === '')) {
     return true;
-  } else if (action === "askPrincipal" && Number(numberString) < 0) {
+  } else if (action === "askPrincipal" && term < 0) {
     return true;
-  } else if (action === "askAPR" && Number(numberString) < 0) {
+  } else if (action === "askAPR" && term < 0) {
     return true;
-  } else if (action === "askLoanDuration" && Number(numberString) <= 0) {
+  } else if (action === "askLoanTime" && (term <= 0 || term % 1 > 0)) {
     return true;
   } else {
     return false;
   }
 }
 
-function convertResponse(response, action, unit) {
+function convertLoanTerm(response, action, unit) {
   if (action === "askAPR") {
     if (unit === "%") {
       response /= 1200;
@@ -70,13 +72,22 @@ function convertResponse(response, action, unit) {
   return response;
 }
 
-function calcMonthlyPay(principal, APR, loanDuration) {
-  if (APR === 0) return principal / loanDuration;
-  return principal * (APR / (1 - Math.pow((1 + APR), (-loanDuration))));
+function calcMonthlyPay(fullLoanTerms) {
+  let principal = fullLoanTerms.principal;
+  let APR = convertLoanTerm(fullLoanTerms.APR[0], "askAPR", fullLoanTerms.APR[1]);
+  let loanTime = convertLoanTerm(fullLoanTerms.loanTime[0], "askLoanTime", fullLoanTerms.loanTime[1]);
+
+  if (APR === 0) return principal / loanTime;
+  return principal * (APR / (1 - Math.pow((1 + APR), (-loanTime))));
 }
 
 
-function showPaymentAmount(MonthlyPay) {
+function showPaymentAmount(MonthlyPay, fullLoanTerms) {
+  console.clear();
+  showPrompt("For your selected loan terms of:");
+  showPrompt(`Loan amount   : $${fullLoanTerms.principal}`);
+  showPrompt(`Interest rate : ${fullLoanTerms.APR[0]} ${fullLoanTerms.APR[1]}`);
+  showPrompt(`Loan duration : ${fullLoanTerms.loanTime[0]} ${fullLoanTerms.loanTime[1]}`);
   showPrompt(`${MESSAGES["paymentAffix"]} $${MonthlyPay.toFixed(2)}.`);
 }
 
@@ -93,7 +104,7 @@ function askDoAgain() {
 }
 
 function sayBye() {
-  showPrompt(MESSAGES["exit"]);
+  showPrompt(MESSAGES["bye"]);
 }
 
 //
@@ -101,14 +112,20 @@ console.clear();
 showPrompt("Welcome to the Mortgage Calculator");
 
 do {
-  const principal = getResponse("askPrincipal");
+  const [principal] = getLoanTerms("askPrincipal");
   if (principal === 0) {
     showPrompt(MESSAGES["noLoan"]);
   } else {
-    const APR = getResponse("askAPR");
-    const loanDuration = getResponse("askLoanDuration");
-    const MonthlyPay = calcMonthlyPay(principal, APR, loanDuration);
-    showPaymentAmount(MonthlyPay);
+    const [APR, unitAPR] = getLoanTerms("askAPR");
+    const [loanTime, unitLoanTime] = getLoanTerms("askLoanTime");
+    const fullLoanTerms = {
+      principal: principal,
+      APR: [APR, unitAPR],
+      loanTime: [loanTime, unitLoanTime]
+    };
+
+    const MonthlyPay = calcMonthlyPay(fullLoanTerms);
+    showPaymentAmount(MonthlyPay, fullLoanTerms);
   }
 } while (askDoAgain());
 sayBye();
