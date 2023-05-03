@@ -1,16 +1,16 @@
 const readline = require('readline-sync');
 
 const WINNING_LIST = {
-  rock: {winsAgainst: ["lizard", "scissors"], shortName: "(r)ock"},
-  paper: {winsAgainst: ["rock", "spock"], shortName: "(p)aper"},
-  scissors: {winsAgainst: ["paper", "lizard"], shortName: "(sc)issors"},
-  lizard: {winsAgainst: ["lizard", "spock"], shortName: "(l)izard"},
-  spock: {winsAgainst: ["scissors", "rock"], shortName: "(sp)ock"}
+  rock: {winsAgainst: ["lizard", "scissors"], shortHand: "(r)ock"},
+  paper: {winsAgainst: ["rock", "spock"], shortHand: "(p)aper"},
+  scissors: {winsAgainst: ["paper", "lizard"], shortHand: "(sc)issors"},
+  lizard: {winsAgainst: ["lizard", "spock"], shortHand: "(l)izard"},
+  spock: {winsAgainst: ["scissors", "rock"], shortHand: "(sp)ock"}
 };
 
 const VALID_MOVES = Object.keys(WINNING_LIST);
-const VALID_MOVES_SHORT = VALID_MOVES.map(key => WINNING_LIST[key].shortName);
-const VALID_MOVES_FIRST = VALID_MOVES_SHORT.map(key => key.slice(1,key.lastIndexOf(")")));
+const VALID_MOVES_SHORTHAND = VALID_MOVES.map(key => WINNING_LIST[key].shortHand);
+const VALID_MOVES_INIT = VALID_MOVES_SHORTHAND.map(key => key.slice(1,key.lastIndexOf(")")));
 
 const scoreKeeper = {
   round: 1,
@@ -29,12 +29,12 @@ function prompt(message) {
 // ask user move
 function askUserMove() {
   prompt(`Please choose your move :`);
-  prompt(`${VALID_MOVES_SHORT.join(", ")}`);
-  let userMove = readline.question();
+  prompt(`${VALID_MOVES_SHORTHAND.join(", ")}`);
+  let userMove = readline.question().toLowerCase();
   while (checkInvalidMove(userMove)) {
     prompt('That is an invalid move. Please choose again:');
-    prompt(`${VALID_MOVES_SHORT.join(", ")}`);
-    userMove = readline.question();
+    prompt(`${VALID_MOVES_SHORTHAND.join(", ")}`);
+    userMove = readline.question().toLowerCase();
   }
   return VALID_MOVES.filter(key => key.startsWith(userMove))[0];
 }
@@ -43,7 +43,7 @@ function askUserMove() {
 function checkInvalidMove(userMove) {
 
   let longNotationInvalid = !VALID_MOVES.includes(userMove);
-  let shortNotationInvalid = !VALID_MOVES_FIRST.includes(userMove);
+  let shortNotationInvalid = !VALID_MOVES_INIT.includes(userMove);
   return longNotationInvalid && shortNotationInvalid;
 }
 
