@@ -22,13 +22,13 @@ function askUnits(action) {
 
 function convertUnits(unit) {
   let unitConverted;
-  if (unit[0] === "p") {
+  if (unit[0].toLowerCase() === "p") {
     unitConverted = "%";
-  } else if (unit[0] === "d") {
+  } else if (unit[0].toLowerCase() === "d") {
     unitConverted = "";
-  } else if (unit[0] === "y") {
+  } else if (unit[0].toLowerCase() === "y") {
     unitConverted = "years";
-  } else if (unit[0] === "m") {
+  } else if (unit[0].toLowerCase() === "m") {
     unitConverted = "months";
   }
   return unitConverted;
@@ -84,13 +84,13 @@ function calcMonthlyPay(fullLoanTerms) {
 }
 
 
-function showPaymentAmount(MonthlyPay, fullLoanTerms) {
+function showPaymentAmount(monthlyPay, fullLoanTerms) {
   console.clear();
   showPrompt("For your selected loan terms of:");
   showPrompt(`Loan amount   : $${fullLoanTerms.principal}`);
   showPrompt(`Interest rate : ${fullLoanTerms.APR[0]} ${fullLoanTerms.APR[1]}`);
   showPrompt(`Loan duration : ${fullLoanTerms.loanTime[0]} ${fullLoanTerms.loanTime[1]}`);
-  showPrompt(`${MESSAGES["paymentAffix"]} $${MonthlyPay.toFixed(2)}.`);
+  showPrompt(`${MESSAGES["paymentAffix"]} $${monthlyPay.toFixed(2)}.`);
 }
 
 function askDoAgain() {
@@ -109,10 +109,14 @@ function sayBye() {
   showPrompt(MESSAGES["bye"]);
 }
 
+function sayHi() {
+  showPrompt(MESSAGES["welcome"]);
+}
+
 //
 console.clear();
-showPrompt(MESSAGES["welcome"]);
 
+sayHi();
 do {
   const [principal] = getLoanTerms("askPrincipal");
   if (principal === 0) {
@@ -126,8 +130,8 @@ do {
       loanTime: [loanTime, unitLoanTime]
     };
 
-    const MonthlyPay = calcMonthlyPay(fullLoanTerms);
-    showPaymentAmount(MonthlyPay, fullLoanTerms);
+    const monthlyPay = calcMonthlyPay(fullLoanTerms);
+    showPaymentAmount(monthlyPay, fullLoanTerms);
   }
 } while (askDoAgain());
 sayBye();

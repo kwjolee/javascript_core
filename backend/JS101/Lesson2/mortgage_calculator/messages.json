@@ -1,6 +1,6 @@
 {
   "welcome": "Welcome to the Mortgage Calculator",
-  "askPrincipal": "What is the loan amount?",
+  "askPrincipal": "What is the loan amount? Enter 1000 for $1000",
   "askAPR": "What is the interest rate?",
   "askLoanTime": "What is the loan duration?",
   "askDoAgain": "Would you like to do another payment calculation? (y)es/(n)o",
@@ -19,7 +19,9 @@
     "askLoanTime": "Would you like to enter loan duration in (y)ears or (m)onths?"
   },
   "allowedUnits": {
-    "askAPR": ["p", "percent", "percentage", "d", "decimal"],
-    "askLoanTime": ["y", "year", "years", "m", "month", "months"]
+    "askAPR": ["p", "percent", "percentage", "d", "decimal",
+               "P", "PERCENT", "PERCENTAGE]", "D", "DECIMAL"],
+    "askLoanTime": ["y", "year", "years", "m", "month", "months",
+                    "Y", "YEAR", "YEARS", "M", "MONTH", "MONTHS"]
   }
 }
