@@ -1,75 +1,94 @@
 const readline = require('readline-sync');
 
+const ROUNDS_TO_WIN = 3;
+
+const SCORECARD_LABEL = {
+  round: "Round",
+  userName: "You",
+  CPUName: "CPU",
+  lastUserMove: "lastUserMove",
+  lastCPUMove: "lastCPUMove",
+  lastWinner: "lastWinner",
+  currentLeader: "leads",
+  gameWinner: "winner"
+};
+
 const WINNING_LIST = {
   rock: {winsAgainst: ["lizard", "scissors"], shortHand: "(r)ock"},
   paper: {winsAgainst: ["rock", "spock"], shortHand: "(p)aper"},
   scissors: {winsAgainst: ["paper", "lizard"], shortHand: "(sc)issors"},
-  lizard: {winsAgainst: ["lizard", "spock"], shortHand: "(l)izard"},
+  lizard: {winsAgainst: ["paper", "spock"], shortHand: "(l)izard"},
   spock: {winsAgainst: ["scissors", "rock"], shortHand: "(sp)ock"}
 };
 
 const VALID_MOVES = Object.keys(WINNING_LIST);
-const VALID_MOVES_SHORTHAND = VALID_MOVES.map(key => WINNING_LIST[key].shortHand);
-const VALID_MOVES_INIT = VALID_MOVES_SHORTHAND.map(key => key.slice(1,key.lastIndexOf(")")));
+const VALID_SHORTHAND = VALID_MOVES.map(key => WINNING_LIST[key].shortHand);
+const VALID_INITIALS = VALID_SHORTHAND.map(key => key.slice(1,key.lastIndexOf(")")));
 
-const scoreKeeper = {
-  round: 1,
-  You: 0,
-  CPU: 0,
-  lastUser: '',
-  lastCPU: '',
-  lastWinner: ''
+const LONGEST_VALID_MOVE = Math.max(...VALID_MOVES.map(move => move.length));
+
+const CHOICES_SPACE = LONGEST_VALID_MOVE + 1;
+const LABEL_SPACE = SCORECARD_LABEL["round"].length;
+const CPU_NAME_ADJUST = SCORECARD_LABEL["CPUName"].length;
+const SCORE_SPACE = 5 + LABEL_SPACE + CPU_NAME_ADJUST;
+const USER_SPACE = LABEL_SPACE + CHOICES_SPACE;
+const CPU_SPACE = USER_SPACE + 6 + LABEL_SPACE + CPU_NAME_ADJUST;
+
+const MESSAGES = {
+  askMove: "Please choose your move :",
+  invalidMove: "That is an invalid move. Please choose again:",
+  askReplay: "Would you like to play again? (y)es/(n)o",
+  invalidReplay: "Invalid response. Would you like to play again? (y)es/(n)o",
+  thankyou: "Thank you for playing with us.\n",
+  welcome: "Welcome to the game.",
+  start: `First to winning ${ROUNDS_TO_WIN} rounds wins the game.\n`
 };
 
-// prompter
-function prompt(message) {
+function prompt(message = '') {
   console.log(`===> ${message}`);
 }
 
-// ask user move
-function askUserMove() {
-  prompt(`Please choose your move :`);
-  prompt(`${VALID_MOVES_SHORTHAND.join(", ")}`);
+function getUserMove() {
+  prompt(`${MESSAGES["askMove"]}`);
+  prompt(`${VALID_SHORTHAND.join(", ")}`);
   let userMove = readline.question().toLowerCase();
   while (checkInvalidMove(userMove)) {
-    prompt('That is an invalid move. Please choose again:');
-    prompt(`${VALID_MOVES_SHORTHAND.join(", ")}`);
+    prompt(`${MESSAGES["invalidMove"]}`);
+    prompt(`${VALID_SHORTHAND.join(", ")}`);
     userMove = readline.question().toLowerCase();
   }
   return VALID_MOVES.filter(key => key.startsWith(userMove))[0];
+
+  function checkInvalidMove(userMove) {
+    const longNotationInvalid = !VALID_MOVES.includes(userMove);
+    const shortNotationInvalid = !VALID_INITIALS.includes(userMove);
+    return longNotationInvalid && shortNotationInvalid;
+  }
 }
 
-// validate user input
-function checkInvalidMove(userMove) {
-
-  let longNotationInvalid = !VALID_MOVES.includes(userMove);
-  let shortNotationInvalid = !VALID_MOVES_INIT.includes(userMove);
-  return longNotationInvalid && shortNotationInvalid;
-}
-
-// generate computer move
 function getCPUMove() {
   const randCPU = Math.floor(Math.random() * VALID_MOVES.length);
   return VALID_MOVES[randCPU];
 }
 
-// determine winner
 function getWinner(userMove, CPUMove) {
   if (WINNING_LIST[userMove].winsAgainst.includes(CPUMove)) {
-    return "You";
+    return SCORECARD_LABEL["userName"];
   } else if (userMove === CPUMove) {
     return "tie";
   } else {
-    return "CPU";
+    return SCORECARD_LABEL["CPUName"];
   }
 }
 
-// show winner
-function displayWinner() {
-  let userMove = scoreKeeper["lastUser"];
-  let CPUMove = scoreKeeper["lastCPU"];
-  let winner = scoreKeeper["lastWinner"];
-  prompt(`You chose ${userMove}. Computer chose ${CPUMove}.`);
+function displayWinner(scorecard) {
+  const userMove = scorecard[SCORECARD_LABEL["lastUserMove"]];
+  const CPUMove = scorecard[SCORECARD_LABEL["lastCPUMove"]];
+  const winner = scorecard[SCORECARD_LABEL["lastWinner"]];
+  const userName = SCORECARD_LABEL["userName"];
+  const CPUName = SCORECARD_LABEL["CPUName"];
+  const moveSpace = CHOICES_SPACE - userMove.length;
+  prompt(`${userName} chose ${userMove}.${spaces(moveSpace)}${CPUName} chose ${CPUMove}.`);
   if (winner !== "tie") {
     prompt(`${winner} won the round!\n`);
   } else {
@@ -77,104 +96,136 @@ function displayWinner() {
   }
 }
 
-// ask play again
 function askReplay() {
-  prompt(`${scoreKeeper["lastWinner"]} won the game!\n`);
-  prompt("Would you like to play again? (y)es/(n)o");
+  prompt(`${MESSAGES["askReplay"]}`);
   let replay = readline.question();
   while (checkInvalidYesNo(replay)) {
-    prompt("Invalid response. Would you like to play again? (y)es/(n)o");
+    prompt(`${MESSAGES["invalidReplay"]}`);
     replay = readline.question();
   }
   return replay.toLowerCase()[0] === "y";
+
+  function checkInvalidYesNo(replay) {
+    return !["y", "yes", "n", "no"].includes(replay);
+  }
 }
 
-// validate yes/no
-function checkInvalidYesNo(replay) {
-  return !["y", "yes", "n", "no"].includes(replay);
-}
+function displayScore(leadStatus, scorecard) {
+  const round = scorecard[SCORECARD_LABEL["round"]];
+  const roundName = SCORECARD_LABEL["round"];
+  const userScore = scorecard[SCORECARD_LABEL["userName"]];
+  const CPUScore = scorecard[SCORECARD_LABEL["CPUName"]];
+  const CPUName = SCORECARD_LABEL["CPUName"];
+  const ROUND_SPACE = (round < 10) ? 9 : 8;
 
-// increment round
-function incrementRound() {
-  scoreKeeper["round"] += 1;
-}
-
-// increment winner
-function incrementWinner(winner) {
-  scoreKeeper[winner] += 1;
-}
-
-// display round and winner
-function displayScore(status) {
-  let round = scoreKeeper["round"];
-  let userScore = scoreKeeper["You"];
-  let CPUScore = scoreKeeper["CPU"];
-  prompt(`This is     Your score     Computer score`);
-  prompt(`Round ${round}${" ".repeat(9)}${userScore}${" ".repeat(17)}${CPUScore}`);
+  prompt(`This is${spaces(LABEL_SPACE)}Your score${spaces(LABEL_SPACE)}${CPUName} score`);
+  prompt(`${roundName} ${round}${spaces(ROUND_SPACE)}${userScore}${spaces(SCORE_SPACE)}${CPUScore}`);
   if (userScore > CPUScore) {
-    prompt(`${" ".repeat(14)}${status}\n`);
+    prompt(`${spaces(USER_SPACE)}${leadStatus}\n`);
   } else if (userScore < CPUScore) {
-    prompt(`${" ".repeat(32)}${status}\n`);
+    prompt(`${spaces(CPU_SPACE)}${leadStatus}\n`);
   } else {
     prompt("\n");
   }
 }
 
-function getLeadScore() {
-  let userScore = scoreKeeper["You"];
-  let CPUScore = scoreKeeper["CPU"];
-  return Math.max(userScore, CPUScore);
+function spaces(number) {
+  return " ".repeat(number);
 }
 
-function updateLastMoves(userMove, CPUMove, winner) {
-  scoreKeeper["lastUser"] = userMove;
-  scoreKeeper["lastCPU"] = CPUMove;
-  scoreKeeper["lastWinner"] = winner;
+function getLeaderScore(scorecard) {
+  let userScore = scorecard[SCORECARD_LABEL["userName"]];
+  let CPUScore = scorecard[SCORECARD_LABEL["CPUName"]];
+  return Math.max(userScore, CPUScore);
 }
 
 function sayBye() {
   console.clear();
-  prompt("Thank you for playing with us.\n");
+  prompt(`${MESSAGES["thankyou"]}`);
 }
 
-function displayHeader(status) {
-  if (scoreKeeper["round"] === 1) {
-    prompt("Welcome to the game.");
-    prompt("Let's get started.\n");
-    displayScore(status);
+function displayHeader(scorecard, leadStatus = SCORECARD_LABEL["currentLeader"]) {
+  if (scorecard[SCORECARD_LABEL["round"]] === 1) {
+    prompt(`${MESSAGES["welcome"]}`);
+    prompt(`${MESSAGES["start"]}`);
+    displayScore(leadStatus, scorecard);
   } else {
-    displayWinner();
-    displayScore(status);
+    displayWinner(scorecard);
+    displayScore(leadStatus, scorecard);
   }
 }
 
-function resetScore() {
-  scoreKeeper.round = 1;
-  scoreKeeper.CPU = 0;
-  scoreKeeper.You = 0;
+function makeScorecard() {
+  const scorecard = {
+    [SCORECARD_LABEL["round"]]: 1, [SCORECARD_LABEL["userName"]]: 0, [SCORECARD_LABEL["CPUName"]]: 0,
+    [SCORECARD_LABEL["lastUserMove"]]: '',  [SCORECARD_LABEL["lastCPUMove"]]: '', [SCORECARD_LABEL["lastWinner"]]: ''
+  };
+
+  const incrementRound = function() {
+    scorecard[SCORECARD_LABEL["round"]] += 1;
+  };
+
+  const getScorecard = () => scorecard;
+
+  const incrementWinner = function(winner) {
+    scorecard[winner] += 1;
+  };
+
+  const updateLastMoves = function(userMove, CPUMove, winner) {
+    scorecard[SCORECARD_LABEL["lastUserMove"]] = userMove;
+    scorecard[SCORECARD_LABEL["lastCPUMove"]] = CPUMove;
+    scorecard[SCORECARD_LABEL["lastWinner"]] = winner;
+  };
+
+  return [incrementRound, getScorecard, incrementWinner, updateLastMoves];
+}
+
+function announceVictor(victor) {
+  prompt(`${victor} won the game!\n`);
+}
+
+function playRound() {
+  showRules();
+  const userMove = getUserMove();
+  const CPUMove = getCPUMove();
+  const winner = getWinner(userMove, CPUMove);
+  return [userMove, CPUMove, winner];
+
+  function showRules() {
+    for (let winningMove in WINNING_LIST) {
+      const losingMoves = WINNING_LIST[winningMove]["winsAgainst"];
+      const spaceW = spaces(CHOICES_SPACE - winningMove.length);
+      const spaceL = spaces(CHOICES_SPACE - losingMoves[0].length);
+      prompt(`${winningMove}${spaceW}wins against ${losingMoves.join(`,${spaceL}`)}`);
+    }
+    console.log();
+  }
 }
 
 //
 do {
-  resetScore();
-  let leadScore = 0;
+  const [incrementRound, getScorecard,
+    incrementWinner, updateLastMoves] = makeScorecard();
+
+  let leaderScore = 0;
 
   do {
     console.clear();
 
-    displayHeader("leads");
+    displayHeader(getScorecard());
 
-    let userMove = askUserMove();
-    let CPUMove = getCPUMove();
-    let winner = getWinner(userMove, CPUMove);
+    const [userMove, CPUMove, winner] = playRound();
 
     incrementRound();
     incrementWinner(winner);
     updateLastMoves(userMove, CPUMove, winner);
 
-    leadScore = getLeadScore();
-  } while (leadScore < 3);
+    leaderScore = getLeaderScore(getScorecard());
+  } while (leaderScore < ROUNDS_TO_WIN);
+
   console.clear();
-  displayHeader("winner");
+  displayHeader(getScorecard(), SCORECARD_LABEL["gameWinner"]);
+  announceVictor(getScorecard()[[SCORECARD_LABEL["lastWinner"]]]);
+
 } while (askReplay());
 sayBye();
