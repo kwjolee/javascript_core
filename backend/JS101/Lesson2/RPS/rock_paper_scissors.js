@@ -161,8 +161,8 @@ function makeScorecard() {
     [SCORECARD_LABEL["lastUserMove"]]: '',  [SCORECARD_LABEL["lastCPUMove"]]: '', [SCORECARD_LABEL["lastWinner"]]: ''
   };
 
-  const incrementRound = function() {
-    scorecard[SCORECARD_LABEL["round"]] += 1;
+  const incrementRound = function(count) {
+    scorecard[SCORECARD_LABEL["round"]] += count;
   };
 
   const getScorecard = () => scorecard;
@@ -216,7 +216,7 @@ do {
 
     const [userMove, CPUMove, winner] = playRound();
 
-    incrementRound();
+    incrementRound(1);
     incrementWinner(winner);
     updateLastMoves(userMove, CPUMove, winner);
 
@@ -224,6 +224,7 @@ do {
   } while (leaderScore < ROUNDS_TO_WIN);
 
   console.clear();
+  incrementRound(-1);
   displayHeader(getScorecard(), SCORECARD_LABEL["gameWinner"]);
   announceVictor(getScorecard()[[SCORECARD_LABEL["lastWinner"]]]);
 
