@@ -25,9 +25,9 @@ const VALID_MOVES = Object.keys(WINNING_LIST);
 const VALID_SHORTHAND = VALID_MOVES.map(key => WINNING_LIST[key].shortHand);
 const VALID_INITIALS = VALID_SHORTHAND.map(key => key.slice(1,key.lastIndexOf(")")));
 
-const LONGEST_VALID_MOVE = Math.max(...VALID_MOVES.map(move => move.length));
+const LONGEST_VALID_LENGTH = Math.max(...VALID_MOVES.map(move => move.length));
 
-const CHOICES_SPACE = LONGEST_VALID_MOVE + 1;
+const CHOICES_SPACE = LONGEST_VALID_LENGTH + 1;
 const LABEL_SPACE = SCORECARD_LABEL["round"].length;
 const CPU_NAME_ADJUST = SCORECARD_LABEL["CPUName"].length;
 const SCORE_SPACE = 5 + LABEL_SPACE + CPU_NAME_ADJUST;
