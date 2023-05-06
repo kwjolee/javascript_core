@@ -98,12 +98,12 @@ function displayWinner(scorecard) {
 
 function askReplay() {
   prompt(`${MESSAGES["askReplay"]}`);
-  let replay = readline.question();
+  let replay = readline.question().toLowerCase();
   while (checkInvalidYesNo(replay)) {
     prompt(`${MESSAGES["invalidReplay"]}`);
-    replay = readline.question();
+    replay = readline.question().toLowerCase();
   }
-  return replay.toLowerCase()[0] === "y";
+  return replay[0] === "y";
 
   function checkInvalidYesNo(replay) {
     return !["y", "yes", "n", "no"].includes(replay);
@@ -165,7 +165,7 @@ function makeScorecard() {
     scorecard[SCORECARD_LABEL["round"]] += count;
   };
 
-  const getScorecard = () => scorecard;
+  const getScorecard = () => Object.assign({},scorecard);
 
   const incrementWinner = function(winner) {
     scorecard[winner] += 1;
