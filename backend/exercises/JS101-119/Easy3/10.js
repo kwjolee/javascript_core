@@ -1,22 +1,21 @@
 function century(year) {
-  let cent = Math.ceil(year / 100);
-  let suffix = pickSuffix(cent);
-  return `${cent}${suffix}`;
-}
-
-function pickSuffix(num) {
-  switch (num % 100) {
-    case 11:
-    case 12:
-    case 13: return 'th';
+  let centuryNumber = Math.ceil(year / 100);
+  let suffix;
+  switch (centuryNumber % 10) {
+    case 1:
+      suffix = 'st';
+      break;
+    case 2:
+      suffix = 'nd';
+      break;
+    case 3:
+      suffix = 'rd';
+      break;
     default:
-      switch (num % 10) {
-        case 1: return 'st';
-        case 2: return 'nd';
-        case 3: return 'rd';
-        default: return 'th';
-      }
+      suffix = 'th';
   }
+  if (centuryNumber % 100 === 11 || centuryNumber % 100  === 12 || centuryNumber % 100  === 13) suffix = "th";
+  console.log(`${centuryNumber}${suffix}`);
 }
 
 century(2000);        // "20th"

@@ -1,13 +1,14 @@
-function stringy(size) {
-  let result = "";
-  for (let idx = 0; idx < size; idx++) {
-    let number = ((idx % 2) === 0) ? 1 : 0;
-    result += number;
+function stringy(number) {
+  let outString = '';
+  let prevChar = 0;
+  while (outString.length < number) {
+    if (prevChar === 0) {
+      outString += prevChar += 1;
+    } else if (prevChar === 1) {
+      outString += prevChar -= 1;
+    }
   }
-  return result;
+  return outString;
 }
 
-stringy(6);    // "101010"
-stringy(9);    // "101010101"
-stringy(4);    // "1010"
-stringy(7);    // "1010101"
+console.log(stringy(7));

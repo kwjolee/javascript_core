@@ -1,9 +1,9 @@
 function cleanUp(string) {
-  let outString = string.replace(/[^a-z]/gi," ");
-  while (outString.indexOf('  ') !== -1) {
-    outString = outString.replace("  "," ");
+  string = string.replace(/[^a-z]/gi, " ");
+  while (string.match(/  /gi) !== null) {
+    string = string.replace("  ", " ");
   }
-  return outString;
+  console.log(string);
 }
 
 cleanUp("---what's my +*& line?");    // " what s my line "

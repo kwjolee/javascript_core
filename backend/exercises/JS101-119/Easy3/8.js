@@ -1,12 +1,11 @@
 function getGrade(score1, score2, score3) {
-  const MEANGRADE = (score1 + score2 + score3) / 3;
-
-  if (MEANGRADE < 60) return "F";
-  if (MEANGRADE < 70) return "D";
-  if (MEANGRADE < 80) return "C";
-  if (MEANGRADE < 90) return "B";
+  const allScore = (score1 + score2 + score3) / 3;
+  if (allScore < 60) return "F";
+  if (allScore < 70) return "D";
+  if (allScore < 80) return "C";
+  if (allScore < 90) return "B";
   return "A";
 }
 
-console.log(getGrade(95, 90, 93));
-console.log(getGrade(50, 50, 95));
+getGrade(95, 90, 93);    // "A"
+getGrade(50, 50, 95);    // "D"

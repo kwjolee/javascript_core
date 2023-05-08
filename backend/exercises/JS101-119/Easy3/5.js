@@ -1,9 +1,9 @@
-function triangle(side) {
-  for (let row = 1; row <= side; row += 1) {
-    let out = ' '.repeat(side - row) + '*'.repeat(row);
-    console.log(out);
+function triangle(length) {
+  let logged = 0 ;
+  while (logged <= length) {
+    console.log(`${" ".repeat(length - logged)}${"*".repeat(logged)}`);
+    logged += 1;
   }
 }
 
-// triangle(5);
 triangle(9);
