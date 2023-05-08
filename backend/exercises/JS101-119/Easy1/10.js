@@ -1,12 +1,9 @@
 function multisum(number) {
-  let sum = 0;
-  for (let num = 1; num <= number; num += 1) {
-    if (num % 3 === 0 || num % 5 === 0) sum += num;
+  let outNumber = 0;
+  for (let ind = 1; ind <= number; ind += 1) {
+    if (ind % 3 === 0 || ind % 5 === 0) outNumber += ind;
   }
-  return sum;
+  return outNumber;
 }
 
-multisum(3);       // 3
-multisum(5);       // 8
-multisum(10);      // 33
-multisum(1000);    // 234168
+console.log(multisum(1000));

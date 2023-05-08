@@ -10,6 +10,7 @@ const SCORECARD_LABEL = {
   lastCPUMove: "lastCPUMove",
   lastWinner: "lastWinner",
   currentLeader: "leads",
+  tie: "tie",
   gameWinner: "winner"
 };
 
@@ -52,14 +53,14 @@ function getUserMove() {
   prompt(`${MESSAGES["askMove"]}`);
   prompt(`${VALID_SHORTHAND.join(", ")}`);
   let userMove = readline.question().toLowerCase();
-  while (checkInvalidMove(userMove)) {
+  while (isInvalidMove(userMove)) {
     prompt(`${MESSAGES["invalidMove"]}`);
     prompt(`${VALID_SHORTHAND.join(", ")}`);
     userMove = readline.question().toLowerCase();
   }
   return VALID_MOVES.filter(key => key.startsWith(userMove))[0];
 
-  function checkInvalidMove(userMove) {
+  function isInvalidMove(userMove) {
     const longNotationInvalid = !VALID_MOVES.includes(userMove);
     const shortNotationInvalid = !VALID_INITIALS.includes(userMove);
     return longNotationInvalid && shortNotationInvalid;
@@ -75,7 +76,7 @@ function getWinner(userMove, CPUMove) {
   if (WINNING_LIST[userMove].winsAgainst.includes(CPUMove)) {
     return SCORECARD_LABEL["userName"];
   } else if (userMove === CPUMove) {
-    return "tie";
+    return SCORECARD_LABEL["tie"];
   } else {
     return SCORECARD_LABEL["CPUName"];
   }
@@ -87,12 +88,13 @@ function displayWinner(scorecard) {
   const winner = scorecard[SCORECARD_LABEL["lastWinner"]];
   const userName = SCORECARD_LABEL["userName"];
   const CPUName = SCORECARD_LABEL["CPUName"];
+  const tie = SCORECARD_LABEL["tie"];
   const moveSpace = CHOICES_SPACE - userMove.length;
   prompt(`${userName} chose ${userMove}.${spaces(moveSpace)}${CPUName} chose ${CPUMove}.`);
-  if (winner !== "tie") {
+  if (winner !== tie) {
     prompt(`${winner} won the round!\n`);
   } else {
-    prompt("It's a tie.\n");
+    prompt(`It's a ${tie}.\n`);
   }
 }
 
