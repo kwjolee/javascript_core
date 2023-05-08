@@ -1,9 +1,8 @@
 const readline = require('readline-sync');
 
-let name = readline.question('What is your name? ');
-
-if (name[name.length - 1] === "!") {
-  console.log(`HELLO ${name.slice(0,name.length - 1).toUpperCase()}. WHY ARE WE SCREAMING?`);
+let username = readline.question("What is your name? ");
+if (username[username.length - 1] === "!") {
+  console.log(`HELLO ${username.slice(0, -1).toUpperCase()}. WHY ARE WE SCREAMING?`);
 } else {
-  console.log(`Hello ${name}.`);
+  console.log(`Hello ${username}.`);
 }

@@ -1,8 +1,9 @@
-function centerOf(str) {
-  if (str.length % 2 === 0) {
-    return str[(str.length / 2) - 1] + str[str.length / 2];
+function centerOf(string) {
+  if (string.length % 2 !== 0) {
+    return string[Math.floor(string.length / 2)];
+  } else {
+    return string.slice(string.length / 2 - 1, string.length / 2 + 1);
   }
-  return str[Math.floor(str.length / 2)];
 }
 
 console.log(centerOf('I Love JavaScript')); // "a"

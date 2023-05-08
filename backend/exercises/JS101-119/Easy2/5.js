@@ -1,11 +1,11 @@
 const readline = require('readline-sync');
 
-let firstNumber = +readline.question('==> Enter the first number:\n');
-let secondNumber = +readline.question('==> Enter the second number:\n');
+const firstNum = +readline.question("==> Enter the first number:\n");
+const secondNum = +readline.question("==> Enter the second number:\n");
 
-console.log(`==> ${firstNumber} + ${secondNumber} = ${firstNumber + secondNumber}`);
-console.log(`==> ${firstNumber} - ${secondNumber} = ${firstNumber - secondNumber}`);
-console.log(`==> ${firstNumber} * ${secondNumber} = ${firstNumber * secondNumber}`);
-console.log(`==> ${firstNumber} / ${secondNumber} = ${Math.floor(firstNumber / secondNumber)}`);
-console.log(`==> ${firstNumber} % ${secondNumber} = ${firstNumber % secondNumber}`);
-console.log(`==> ${firstNumber} ** ${secondNumber} = ${firstNumber ** secondNumber}`);
+console.log(`==> ${firstNum} + ${secondNum} = ${firstNum + secondNum}`);
+console.log(`==> ${firstNum} - ${secondNum} = ${firstNum - secondNum}`);
+console.log(`==> ${firstNum} * ${secondNum} = ${firstNum * secondNum}`);
+console.log(`==> ${firstNum} / ${secondNum} = ${parseInt(firstNum / secondNum, 10)}`);
+console.log(`==> ${firstNum} % ${secondNum} = ${firstNum % secondNum}`);
+console.log(`==> ${firstNum} ** ${secondNum} = ${firstNum ** secondNum}`);

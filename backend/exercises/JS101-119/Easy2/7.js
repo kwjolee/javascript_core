@@ -1,5 +1,5 @@
-function xor(arg1, arg2) {
-  return (+!!arg1 + +!!arg2 === 1);
+function xor(val1, val2) {
+  return (!!val1 + !!val2) === 1;
 }
 
 console.log(xor(5, 0) === true);          // true
