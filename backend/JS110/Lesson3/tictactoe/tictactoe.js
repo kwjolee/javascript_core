@@ -1,8 +1,10 @@
 const readline = require("readline-sync");
 
-const INITIAL_MARKER = ' ';
 const HUMAN_MARKER = 'X';
 const COMPUTER_MARKER = 'O';
+const INITIAL_MARKER = ' ';
+const BOARDSIZE = 3;
+const GAMES_TO_WIN = 5;
 
 function prompt(msg) {
   console.log(`=> ${msg}`);
@@ -11,42 +13,50 @@ function prompt(msg) {
 function displayBoard(board) {
   console.clear();
 
-  console.log(`You are ${HUMAN_MARKER}. Computer is ${COMPUTER_MARKER}`);
+  console.log(`You are ${HUMAN_MARKER}. Computer is ${COMPUTER_MARKER}\n`);
 
-  console.log('');
   console.log('     |     |');
   console.log(`  ${board['1']}  |  ${board['2']}  |  ${board['3']}`);
-  console.log('     |     |');
-  console.log('-----+-----+-----');
-  console.log('     |     |');
+  console.log('     |     |\n-----+-----+-----\n     |     |');
   console.log(`  ${board['4']}  |  ${board['5']}  |  ${board['6']}`);
-  console.log('     |     |');
-  console.log('-----+-----+-----');
-  console.log('     |     |');
+  console.log('     |     |\n-----+-----+-----\n     |     |');
   console.log(`  ${board['7']}  |  ${board['8']}  |  ${board['9']}`);
-  console.log('     |     |');
-  console.log('');
+  console.log('     |     |\n');
 }
 
 function initializeBoard() {
   let board = {};
 
-  for (let square = 1; square <= 9; square++) {
-    board[String(square)] = INITIAL_MARKER;
+  for (let square = 1; square <= (BOARDSIZE ** 2); square++) {
+    board[String(square)] = ' ';
   }
-
   return board;
 }
 
 function emptySquares(board) {
-  return Object.keys(board).filter(key => board[key] === ' ');
+  return Object.keys(board).filter(key => board[key] === INITIAL_MARKER);
+}
+
+function joinOr(arr, delim = ", ", word = "or") {
+  switch (arr.length) {
+    case 0:
+      return "";
+    case 1:
+      return arr.join();
+    case 2:
+      return arr.join(` ${word} `);
+    default: {
+      let frontStr = arr.slice(0, arr.length - 1).join(delim);
+      return frontStr + delim + word + " " + arr[arr.length - 1];
+    }
+  }
 }
 
 function playerChoosesSquare(board) {
   let square;
 
   while (true) {
-    prompt(`Choose a square (${emptySquares(board).join(', ')}):`);
+    prompt(`Choose a square: ${joinOr(emptySquares(board))}`);
     square = readline.question().trim();
     if (emptySquares(board).includes(square)) break;
 
@@ -98,30 +108,53 @@ function detectWinner(board) {
   return null;
 }
 
-while (true) {
-  let board = initializeBoard();
+function initializeScore() {
+  let scorecard = {Player: 0, Computer: 0};
+  const incrementScore = name => {
+    scorecard[name] += 1;
+  };
+  const getScore = name => scorecard[name];
+  return [incrementScore, getScore];
+}
 
-  while (true) {
+function doReplay() {
+  prompt('Play again? (yes/no)');
+  return readline.question().toLowerCase()[0] === "y";
+}
+
+//
+
+do {
+  const [incrementScore, getScore] = initializeScore();
+  let winner;
+
+  do {
+    let board = initializeBoard();
+
+    while (true) {
+      displayBoard(board);
+
+      playerChoosesSquare(board);
+      if (someoneWon(board) || boardFull(board)) break;
+
+      computerChoosesSquare(board);
+      if (someoneWon(board) || boardFull(board)) break;
+    }
+
     displayBoard(board);
 
-    playerChoosesSquare(board);
-    if (someoneWon(board) || boardFull(board)) break;
+    if (someoneWon(board)) {
+      winner = detectWinner(board);
+      prompt(`${winner} won!`);
+      readline.question("=> Press Enter for next round");
+      incrementScore(winner);
+    } else {
+      prompt("It's a tie!");
+      readline.question("=> Press Enter for next round");
+    }
 
-    computerChoosesSquare(board);
-    if (someoneWon(board) || boardFull(board)) break;
-  }
-
-  displayBoard(board);
-
-  if (someoneWon(board)) {
-    prompt(`${detectWinner(board)} won!`);
-  } else {
-    prompt("It's a tie!");
-  }
-
-  prompt('Play again?');
-  let answer = readline.question().toLowerCase()[0];
-  if (answer !== 'y') break;
-}
+  } while (getScore(winner) < GAMES_TO_WIN);
+  console.log(`${winner} won ${GAMES_TO_WIN} rounds!`);
+} while (doReplay());
 
 prompt('Thanks for playing Tic Tac Toe!');
