@@ -137,6 +137,10 @@ function askReplay() {
   return replay === 'y' || replay === 'yes';
 }
 
+function goodbye() {
+  console.log("Thanks for playing Tic Tac Toe!");
+}
+
 // /*
 
 do {
@@ -152,4 +156,5 @@ do {
   declareWinner(checkGameWinner(board));
 } while (askReplay());
 
+goodbye();
 // */
