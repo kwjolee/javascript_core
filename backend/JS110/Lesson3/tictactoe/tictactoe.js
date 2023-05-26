@@ -1,12 +1,12 @@
 const readline = require('readline-sync');
-const USER_ID = "X";
-const CPU_ID = "O";
+const USER_ID = " X ";
+const CPU_ID = " O ";
 
 function initializeBoard() {
   let board = {};
 
   for (let square = 1; square <= 9; square += 1) {
-    board[square] = square;
+    board[square] = `(${square})`;
   }
 
   return board;
@@ -17,15 +17,15 @@ function displayBoard(board) {
   console.log(`You are ${USER_ID}. Computer is ${CPU_ID}`);
   console.log('');
   console.log('     |     |');
-  console.log(`  ${board['1']}  |  ${board['2']}  |  ${board['3']}`);
+  console.log(` ${board['1']} | ${board['2']} | ${board['3']}`);
   console.log('     |     |');
   console.log('-----+-----+-----');
   console.log('     |     |');
-  console.log(`  ${board['4']}  |  ${board['5']}  |  ${board['6']}`);
+  console.log(` ${board['4']} | ${board['5']} | ${board['6']}`);
   console.log('     |     |');
   console.log('-----+-----+-----');
   console.log('     |     |');
-  console.log(`  ${board['7']}  |  ${board['8']}  |  ${board['9']}`);
+  console.log(` ${board['7']} | ${board['8']} | ${board['9']}`);
   console.log('     |     |');
   console.log('');
 }
@@ -49,7 +49,7 @@ function getUserInput(board) {
 function makeCPUSelection(board) {
   let openBoard = getOpenBoard(board);
   let randInd = Math.floor(Math.random() * openBoard.length);
-  let CPUSelection = openBoard[randInd];
+  let CPUSelection = openBoard[randInd][1];
   return CPUSelection;
 }
 
