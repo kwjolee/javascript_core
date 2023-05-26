@@ -1,160 +1,127 @@
-const readline = require('readline-sync');
-const USER_ID = " X ";
-const CPU_ID = " O ";
+const readline = require("readline-sync");
+
+const INITIAL_MARKER = ' ';
+const HUMAN_MARKER = 'X';
+const COMPUTER_MARKER = 'O';
+
+function prompt(msg) {
+  console.log(`=> ${msg}`);
+}
+
+function displayBoard(board) {
+  console.clear();
+
+  console.log(`You are ${HUMAN_MARKER}. Computer is ${COMPUTER_MARKER}`);
+
+  console.log('');
+  console.log('     |     |');
+  console.log(`  ${board['1']}  |  ${board['2']}  |  ${board['3']}`);
+  console.log('     |     |');
+  console.log('-----+-----+-----');
+  console.log('     |     |');
+  console.log(`  ${board['4']}  |  ${board['5']}  |  ${board['6']}`);
+  console.log('     |     |');
+  console.log('-----+-----+-----');
+  console.log('     |     |');
+  console.log(`  ${board['7']}  |  ${board['8']}  |  ${board['9']}`);
+  console.log('     |     |');
+  console.log('');
+}
 
 function initializeBoard() {
   let board = {};
 
-  for (let square = 1; square <= 9; square += 1) {
-    board[square] = `(${square})`;
+  for (let square = 1; square <= 9; square++) {
+    board[String(square)] = INITIAL_MARKER;
   }
 
   return board;
 }
 
-function displayBoard(board) {
-  console.clear();
-  console.log(`You are ${USER_ID}. Computer is ${CPU_ID}`);
-  console.log('');
-  console.log('     |     |');
-  console.log(` ${board['1']} | ${board['2']} | ${board['3']}`);
-  console.log('     |     |');
-  console.log('-----+-----+-----');
-  console.log('     |     |');
-  console.log(` ${board['4']} | ${board['5']} | ${board['6']}`);
-  console.log('     |     |');
-  console.log('-----+-----+-----');
-  console.log('     |     |');
-  console.log(` ${board['7']} | ${board['8']} | ${board['9']}`);
-  console.log('     |     |');
-  console.log('');
+function emptySquares(board) {
+  return Object.keys(board).filter(key => board[key] === ' ');
 }
 
-function getUserInput(board) {
-  displayBoard(board);
-  let userInput = readline.question("Please select a board position (1-9)\n");
+function playerChoosesSquare(board) {
+  let square;
 
-  while (!isOpenPosition(userInput)) {
-    displayBoard(board);
-    userInput = readline.question("Please select a valid, open position (1-9)\n");
+  while (true) {
+    prompt(`Choose a square (${emptySquares(board).join(', ')}):`);
+    square = readline.question().trim();
+    if (emptySquares(board).includes(square)) break;
+
+    prompt("Sorry, that's not a valid choice.");
   }
-  return userInput;
 
-  function isOpenPosition(input) {
-    const BOARD_POSITIONS = ['1', '2', '3', '4', '5', '6', '7', '8', '9'];
-    return BOARD_POSITIONS.includes(input) && !"XO".includes(board[input]);
-  }
+  board[square] = HUMAN_MARKER;
 }
 
-function makeCPUSelection(board) {
-  let openBoard = getOpenBoard(board);
-  let randInd = Math.floor(Math.random() * openBoard.length);
-  let CPUSelection = openBoard[randInd][1];
-  return CPUSelection;
+function computerChoosesSquare(board) {
+  let randomIndex = Math.floor(Math.random() * emptySquares(board).length);
+  let square = emptySquares(board)[randomIndex];
+  board[square] = COMPUTER_MARKER;
 }
 
-function getOpenBoard(board) {
-  let currentBoard = Object.values(board);
-  return currentBoard.filter(val => val !== USER_ID && val !== CPU_ID);
+function boardFull(board) {
+  return emptySquares(board).length === 0;
 }
 
-function updateBoard(boardPosition, playerID, board) {
-  board[boardPosition] = playerID;
+function someoneWon(board) {
+  return detectWinner(board);
 }
 
-function checkGameWinner(board) {
-  let openBoard = getOpenBoard(board);
+function detectWinner(board) {
+  let winningLines = [
+    [1, 2, 3], [4, 5, 6], [7, 8, 9], // rows
+    [1, 4, 7], [2, 5, 8], [3, 6, 9], // columns
+    [1, 5, 9], [3, 5, 7]             // diagonals
+  ];
 
-  let rowWinner = checkRowWinner(board);
-  let colWinner = checkColWinner(board);
-  let diaWinner = checkDiaWinner(board);
-  let winners = [rowWinner, colWinner, diaWinner];
-  let gameWinner = winners.filter(val => val !== null);
-  if (gameWinner.length > 0) {
-    return gameWinner[0];
-  } else if (openBoard.length === 0 ) {
-    return "tie";
-  } else {
-    return null;
-  }
-}
+  for (let line = 0; line < winningLines.length; line++) {
+    let [ sq1, sq2, sq3 ] = winningLines[line];
 
-function checkRowWinner(board) {
-  for (let ind = 1; ind <= 7; ind += 3) {
-    let entries = [board[ind], board[ind + 1], board[ind + 2]];
-    if (entries.every(val => val === USER_ID)) {
-      return USER_ID;
-    } else if (entries.every(val => val === CPU_ID)) {
-      return CPU_ID;
+    if (
+        board[sq1] === HUMAN_MARKER &&
+        board[sq2] === HUMAN_MARKER &&
+        board[sq3] === HUMAN_MARKER
+    ) {
+      return 'Player';
+    } else if (
+        board[sq1] === COMPUTER_MARKER &&
+        board[sq2] === COMPUTER_MARKER &&
+        board[sq3] === COMPUTER_MARKER
+    ) {
+      return 'Computer';
     }
   }
+
   return null;
 }
 
-function checkColWinner(board) {
-  for (let ind = 1; ind <= 3; ind += 1) {
-    let entries = [board[ind], board[ind + 3], board[ind + 6]];
-    if (entries.every(val => val === USER_ID)) {
-      return USER_ID;
-    } else if (entries.every(val => val === CPU_ID)) {
-      return CPU_ID;
-    }
-  }
-  return null;
-}
-
-function checkDiaWinner(board) {
-  const DIAGS = [["1", "5", "9"], ["3", "5", "7"]];
-  for (let diag of DIAGS) {
-    let entries = [];
-    for (let ind of diag) {
-      entries.push(board[ind]);
-    }
-    if (entries.every(val => val === USER_ID)) {
-      return USER_ID;
-    } else if (entries.every(val => val === CPU_ID)) {
-      return CPU_ID;
-    }
-  }
-  return null;
-}
-
-function declareWinner(winnerID) {
-  if (winnerID === USER_ID) {
-    console.log("You won the game!");
-  } else if (winnerID === "tie") {
-    console.log("There is no winner.");
-  } else {
-    console.log("You lost the game.");
-  }
-}
-
-function askReplay() {
-  let replay = readline.question("Would you like to play again (y/n)?\n").toLowerCase();
-  while (!['yes', 'no', 'y', 'n'].includes(replay)) {
-    replay = readline.question("Please enter a valid entry (y/n)\n");
-  }
-  return replay === 'y' || replay === 'yes';
-}
-
-function goodbye() {
-  console.log("Thanks for playing Tic Tac Toe!");
-}
-
-// /*
-
-do {
+while (true) {
   let board = initializeBoard();
-  do {
+
+  while (true) {
     displayBoard(board);
-    updateBoard(getUserInput(board), USER_ID, board);
-    if (checkGameWinner(board)) break;
-    updateBoard(makeCPUSelection(board), CPU_ID, board);
-  } while (!checkGameWinner(board));
+
+    playerChoosesSquare(board);
+    if (someoneWon(board) || boardFull(board)) break;
+
+    computerChoosesSquare(board);
+    if (someoneWon(board) || boardFull(board)) break;
+  }
 
   displayBoard(board);
-  declareWinner(checkGameWinner(board));
-} while (askReplay());
 
-goodbye();
-// */
+  if (someoneWon(board)) {
+    prompt(`${detectWinner(board)} won!`);
+  } else {
+    prompt("It's a tie!");
+  }
+
+  prompt('Play again?');
+  let answer = readline.question().toLowerCase()[0];
+  if (answer !== 'y') break;
+}
+
+prompt('Thanks for playing Tic Tac Toe!');
