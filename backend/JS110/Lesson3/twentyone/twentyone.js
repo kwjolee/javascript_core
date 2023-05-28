@@ -1,7 +1,7 @@
 const readline = require('readline-sync');
 
 const PLAYER_NAME = "Player";
-const COMPUTER_NAME = "Computer";
+const COMPUTER_NAME = "Dealer";
 
 const COMPUTER_HIT = 17;
 
@@ -148,6 +148,7 @@ function runPlayerTurn(gameInfo) {
     updateScoreboard(getHands);
     if (doesThisBust(getHands(PLAYER_NAME))) return PLAYER_NAME;
   }
+  prompt('You decided to stay.');
   return null;
 }
 
@@ -156,7 +157,7 @@ function hitOrStay() {
   let playerAction = readline.question().toLowerCase();
   while (!["hit", "h", "stay", "s"].includes(playerAction)) {
     prompt(`Please enter a valid action`);
-    prompt(`Do you want to (h)it" or (s)tay?`);
+    prompt(`Do you want to (h)it or (s)tay?`);
     playerAction = readline.question().toLowerCase();
   }
   return playerAction[0];
@@ -166,9 +167,9 @@ function showHand(getHands, whoseHand, showFullHand) {
   if (whoseHand === PLAYER_NAME) {
     prompt(`Your cards are [${joinHand(getHands(PLAYER_NAME))}] for a score of ${getHandScore(getHands(PLAYER_NAME))}.`);
   } else if (showFullHand) {
-    prompt(`Computer's cards are [${joinHand(getHands(COMPUTER_NAME))}] for a score of ${getHandScore(getHands(COMPUTER_NAME))}.`);
+    prompt(`${COMPUTER_NAME}'s cards are [${joinHand(getHands(COMPUTER_NAME))}] for a score of ${getHandScore(getHands(COMPUTER_NAME))}.`);
   } else {
-    prompt(`Computer's cards are [${getHands(COMPUTER_NAME)[0]} and unknown].`);
+    prompt(`${COMPUTER_NAME}'s cards are [${getHands(COMPUTER_NAME)[0]} and unknown].`);
   }
 }
 
@@ -179,7 +180,7 @@ function runComputerTurn(gameInfo) {
   console.log();
   while (getHandScore(getHands(COMPUTER_NAME)) < COMPUTER_HIT) {
     showHand(getHands, COMPUTER_NAME, true);
-    prompt(`Computer must hit.\n`);
+    prompt(`${COMPUTER_NAME} must hit.\n`);
     dealCard(deck, getHands(COMPUTER_NAME));
     if (doesThisBust(getHands(COMPUTER_NAME))) {
       showHand(getHands, COMPUTER_NAME, true);
@@ -187,7 +188,7 @@ function runComputerTurn(gameInfo) {
     }
   }
   showHand(getHands, COMPUTER_NAME, true);
-  prompt(`Computer must stay.\n`);
+  prompt(`${COMPUTER_NAME} must stay.\n`);
   return null;
 }
 
@@ -204,6 +205,8 @@ function showWinner(loser, getHands) {
     prompt(`${loser} busted.\n`);
     prompt(`${winner} won the game!`);
   }
+  showHand(getHands, PLAYER_NAME, true);
+  showHand(getHands, COMPUTER_NAME, true);
 }
 
 function getWinner(getHands) {
