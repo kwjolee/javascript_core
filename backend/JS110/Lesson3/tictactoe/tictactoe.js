@@ -26,6 +26,7 @@ function prompt(msg) {
 function whoGoesFirst() {
   prompt("Please select who goes first: (P)layer or (C)omputer");
   prompt("This player will go first every round.");
+
   let goFirst = readline.question().toLowerCase();
   let playLower = PLAYER_NAME.toLowerCase();
   let cpuLower = COMPUTER_NAME.toLowerCase();
@@ -34,21 +35,21 @@ function whoGoesFirst() {
     prompt("Please select who goes first: (P)layer or (C)omputer");
     goFirst = readline.question().toLowerCase();
   }
+
   return PLAYERS[goFirst[0]];
 }
 
 function alternatePlayer(currentPlayer) {
   if (currentPlayer === PLAYER_NAME) {
-    return PLAYERS["c"];
+    return PLAYERS.c;
   } else {
-    return PLAYERS["p"];
+    return PLAYERS.p;
   }
 }
 
 function displayBoard(board) {
   console.clear();
   console.log(`You are ${HUMAN_MARKER}. Computer is ${COMPUTER_MARKER}. First to win ${ROUNDS_TO_WIN} rounds wins the game.\n`);
-
   console.log('     |     |');
   console.log(` ${board['1']['display']} | ${board['2']['display']} | ${board['3']['display']}`);
   console.log('     |     |\n-----+-----+-----\n     |     |');
@@ -64,6 +65,7 @@ function initializeBoard() {
   for (let square = 1; square <= (BOARDSIZE ** 2); square++) {
     board[String(square)] = {display: `(${square})`, marker: INITIAL_MARKER};
   }
+
   return board;
 }
 
@@ -87,7 +89,7 @@ function joinOr(arr, delim = ", ", word = "or") {
 }
 
 function markSquare(board, currentPlayer) {
-  if (currentPlayer === "Player") {
+  if (currentPlayer === PLAYER_NAME) {
     playerMarksSquare(board);
   } else {
     computerMarksSquare(board);
@@ -101,15 +103,16 @@ function playerMarksSquare(board) {
     prompt(`Choose a square: ${joinOr(emptySquares(board))}`);
     square = readline.question().trim();
     if (emptySquares(board).includes(square)) break;
-
     prompt("Sorry, that's not a valid choice.");
   }
+
   board[square]['display'] = ` ${HUMAN_MARKER} `;
   board[square]['marker'] = HUMAN_MARKER;
 }
 
 function computerMarksSquare(board) {
   let square;
+
   if (findAtRiskSquare(board, HUMAN_MARKER)) {
     square = findAtRiskSquare(board, HUMAN_MARKER);
   } else if (findAtRiskSquare(board, COMPUTER_MARKER)) {
@@ -127,6 +130,7 @@ function computerMarksSquare(board) {
 
 function findAtRiskSquare(board, player) {
   let opponent;
+
   if (player === HUMAN_MARKER) opponent = COMPUTER_MARKER;
   else if (player === COMPUTER_MARKER) opponent = HUMAN_MARKER;
 
@@ -146,48 +150,51 @@ function boardFull(board) {
 }
 
 function someoneWonRound(board) {
-  return detectRoundWinner(board);
+  return !!detectRoundWinner(board);
 }
 
 function detectRoundWinner(board) {
-
   for (let line = 0; line < WINNING_LINES.length; line++) {
     let [ sq1, sq2, sq3 ] = WINNING_LINES[line];
-
     if (
       board[sq1]['marker'] === HUMAN_MARKER &&
-        board[sq2]['marker'] === HUMAN_MARKER &&
-        board[sq3]['marker'] === HUMAN_MARKER
+      board[sq2]['marker'] === HUMAN_MARKER &&
+      board[sq3]['marker'] === HUMAN_MARKER
     ) {
       return PLAYER_NAME;
     } else if (
       board[sq1]['marker'] === COMPUTER_MARKER &&
-        board[sq2]['marker'] === COMPUTER_MARKER &&
-        board[sq3]['marker'] === COMPUTER_MARKER
+      board[sq2]['marker'] === COMPUTER_MARKER &&
+      board[sq3]['marker'] === COMPUTER_MARKER
     ) {
       return COMPUTER_NAME;
     }
   }
-
   return null;
 }
 
 function initializeScore() {
-  let scorecard = {Player: 0, Computer: 0};
+  let scorecard = {Player: 0, Computer: 0, null: 0};
+
   const incrementScore = name => {
     scorecard[name] += 1;
   };
-  const getScore = () => scorecard;
+
+  const getScore = () => Object.assign({}, scorecard);
+
   return [incrementScore, getScore];
 }
 
 function doReplay() {
   prompt("Would you like to play again (yes/no)?");
+
   let replay = readline.question().toLowerCase();
+
   while (!['yes', 'no', 'y', 'n'].includes(replay)) {
     prompt("Please enter a valid entry (yes/no)");
     replay = readline.question().toLowerCase();
   }
+
   return replay[0] === 'y';
 }
 
@@ -195,16 +202,19 @@ function getRoundScores(getScore) {
   let scoreCard = getScore();
   let playerScore = scoreCard[PLAYER_NAME];
   let computerScore = scoreCard[COMPUTER_NAME];
+
   return [playerScore, computerScore];
 }
 
 function displayGameScore(getScore) {
   let [playerScore, computerScore] = getRoundScores(getScore);
+
   console.log(`Player score is: ${playerScore}. Computer score is: ${computerScore}`);
 }
 
 function getGameWinner(getScore) {
   let [playerScore, computerScore] = getRoundScores(getScore);
+
   if (playerScore === ROUNDS_TO_WIN) return PLAYER_NAME;
   else if (computerScore === ROUNDS_TO_WIN) return COMPUTER_NAME;
   else return null;
@@ -224,14 +234,16 @@ function playRounds(board, currentPlayer, getScore) {
   } while (!someoneWonRound(board) && !boardFull(board));
 }
 
-function displayRoundWinner(board, incrementScore) {
+function displayRoundWinner(board) {
+  let roundWinner = detectRoundWinner(board);
+
   if (someoneWonRound(board)) {
-    let roundWinner = detectRoundWinner(board);
     prompt(`${roundWinner} won!`);
-    incrementScore(roundWinner);
   } else {
     prompt("It's a tie!");
   }
+
+  return roundWinner;
 }
 
 //
@@ -249,7 +261,9 @@ do {
 
     displayBoard(board);
 
-    displayRoundWinner(board, incrementScore);
+    let roundWinner = displayRoundWinner(board);
+
+    incrementScore(roundWinner);
 
     displayGameScore(getScore);
 
@@ -260,7 +274,9 @@ do {
     }
 
   } while (!gameWinner);
+
   prompt(`${gameWinner} won ${ROUNDS_TO_WIN} rounds!`);
+
 } while (doReplay());
 
 prompt('Thanks for playing Tic Tac Toe!');
