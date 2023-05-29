@@ -3,7 +3,10 @@ const readline = require('readline-sync');
 const PLAYER_NAME = "Player";
 const COMPUTER_NAME = "Dealer";
 
-const COMPUTER_HIT = 17;
+const COMPUTER_MUST_HIT = 17;
+const TARGET_SCORE = 21;
+
+const NUMBER_OF_SUITS = 4;
 
 const CARD_TYPES = ["2", "3", "4", "5", "6", "7", "8", "9", "10", "jack", "queen", "king", "ace"];
 
@@ -21,7 +24,7 @@ function initializeDeck() {
   let deck = [];
   for (let card of CARD_TYPES) {
     let count = 0;
-    while (count < 4) {
+    while (count < NUMBER_OF_SUITS) {
       deck.push(card);
       count += 1;
     }
@@ -70,7 +73,7 @@ function dealCard(deck, hand) {
   hand.push(nextCard);
 }
 
-function splitHand(hand) {
+function parseHand(hand) {
   let nonAces = hand.filter(val => val !== "ace");
 
   let aces = [];
@@ -82,7 +85,7 @@ function splitHand(hand) {
 }
 
 function getHandScore(hand) {
-  let [nonAces, aces] = splitHand(hand);
+  let [nonAces, aces] = parseHand(hand);
 
   let nonAceScore = nonAces.reduce((acc, val) => acc + CARD_VALUES[val], 0);
 
@@ -93,8 +96,8 @@ function getHandScore(hand) {
     for (let subCombo of acesCombo) {
       let aceScore = subCombo.reduce((acc, val) => acc + val, 0);
       let subScore = nonAceScore + aceScore;
-      if (subScore <= 21) {
-        score = Math.min(21, subScore);
+      if (subScore <= TARGET_SCORE) {
+        score = Math.min(TARGET_SCORE, subScore);
       } else {
         score = Math.min(score, subScore);
       }
@@ -117,7 +120,7 @@ function cartesianProduct(...arr) {
 }
 
 function doesThisBust(hand) {
-  return getHandScore(hand) > 21;
+  return getHandScore(hand) > TARGET_SCORE;
 }
 
 function joinHand(hand) {
@@ -131,7 +134,7 @@ function joinHand(hand) {
   }
 }
 
-function updateScoreboard(getHands) {
+function showScoreboard(getHands) {
   console.clear();
   showHand(getHands, COMPUTER_NAME, false);
   showHand(getHands, PLAYER_NAME);
@@ -141,11 +144,11 @@ function runPlayerTurn(gameInfo) {
   const getHands = gameInfo.handInfo;
   const deck = gameInfo.deckInfo;
 
-  updateScoreboard(getHands);
+  showScoreboard(getHands);
 
   while (hitOrStay() === "h") {
     dealCard(deck, getHands(PLAYER_NAME));
-    updateScoreboard(getHands);
+    showScoreboard(getHands);
     if (doesThisBust(getHands(PLAYER_NAME))) return PLAYER_NAME;
   }
   prompt('You decided to stay.');
@@ -178,7 +181,7 @@ function runComputerTurn(gameInfo) {
   const deck = gameInfo.deckInfo;
 
   console.log();
-  while (getHandScore(getHands(COMPUTER_NAME)) < COMPUTER_HIT) {
+  while (getHandScore(getHands(COMPUTER_NAME)) < COMPUTER_MUST_HIT) {
     showHand(getHands, COMPUTER_NAME, true);
     prompt(`${COMPUTER_NAME} must hit.\n`);
     dealCard(deck, getHands(COMPUTER_NAME));
