@@ -6,6 +6,8 @@ const COMPUTER_NAME = "Dealer";
 const COMPUTER_MUST_HIT = 17;
 const TARGET_SCORE = 21;
 
+const ROUNDS_TO_WIN = 3;
+
 const NUMBER_OF_SUITS = 4;
 
 const CARD_TYPES = ["2", "3", "4", "5", "6", "7", "8", "9", "10", "jack", "queen", "king", "ace"];
@@ -18,6 +20,15 @@ const CARD_VALUES = {
 
 function prompt(message) {
   console.log(`==> ${message}`);
+}
+
+function greet() {
+  prompt(`Welcome to Twenty One`);
+  prompt(`First to win ${ROUNDS_TO_WIN} rounds wins the game.`);
+  prompt(`If you go over ${TARGET_SCORE}, you will bust and lose the round.`);
+  prompt(`${COMPUTER_NAME} must hit if its score is less than ${COMPUTER_MUST_HIT}.`);
+  prompt(`Please hit Enter to start the game:`);
+  readline.question();
 }
 
 function initializeDeck() {
@@ -61,7 +72,7 @@ function initializeHands(deck) {
   return getHands;
 }
 
-function initializeGame() {
+function initializeRound() {
   const DECK = initializeDeck();
   const getHands = initializeHands(DECK);
   const GAME_INFO = {deckInfo: DECK, handInfo: getHands};
@@ -83,8 +94,9 @@ function parseHand(hand) {
 
   return [nonAces, aces];
 }
-
+let ct = 0;
 function getHandScore(hand) {
+
   let [nonAces, aces] = parseHand(hand);
 
   let nonAceScore = nonAces.reduce((acc, val) => acc + CARD_VALUES[val], 0);
@@ -105,7 +117,8 @@ function getHandScore(hand) {
   } else {
     score = nonAceScore;
   }
-
+  ct += 1;
+  console.log(`I was just run ${ct}`)
   return score;
 }
 
@@ -134,21 +147,28 @@ function joinHand(hand) {
   }
 }
 
-function showScoreboard(getHands) {
+function showScoreboard(getHands, getGameScore) {
   console.clear();
+  showGameScore(getGameScore);
+  console.log();
   showHand(getHands, COMPUTER_NAME, false);
   showHand(getHands, PLAYER_NAME);
 }
 
-function runPlayerTurn(gameInfo) {
-  const getHands = gameInfo.handInfo;
-  const deck = gameInfo.deckInfo;
+function showGameScore(getGameScore) {
+  let [playerScore, computerScore] = [getGameScore()[0], getGameScore()[1]];
+  prompt(`Your score is ${playerScore}. ${COMPUTER_NAME}'s score is ${computerScore}`);
+}
 
-  showScoreboard(getHands);
+function runPlayerTurn(roundInfo, getGameScore) {
+  const getHands = roundInfo.handInfo;
+  const deck = roundInfo.deckInfo;
+
+  showScoreboard(getHands, getGameScore);
 
   while (hitOrStay() === "h") {
     dealCard(deck, getHands(PLAYER_NAME));
-    showScoreboard(getHands);
+    showScoreboard(getHands, getGameScore);
     if (doesThisBust(getHands(PLAYER_NAME))) return PLAYER_NAME;
   }
   prompt('You decided to stay.');
@@ -176,9 +196,9 @@ function showHand(getHands, whoseHand, showFullHand) {
   }
 }
 
-function runComputerTurn(gameInfo) {
-  const getHands = gameInfo.handInfo;
-  const deck = gameInfo.deckInfo;
+function runComputerTurn(roundInfo) {
+  const getHands = roundInfo.handInfo;
+  const deck = roundInfo.deckInfo;
 
   console.log();
   while (getHandScore(getHands(COMPUTER_NAME)) < COMPUTER_MUST_HIT) {
@@ -195,21 +215,23 @@ function runComputerTurn(gameInfo) {
   return null;
 }
 
-function showWinner(loser, getHands) {
-  if (!loser) {
-    let winner = getWinner(getHands);
+function showRoundWinner(loser, getHands, incrementGameScore) {
+  let winner;
+  if (loser === null) {
+    winner = getWinner(getHands);
     if (winner) {
       prompt(`${winner} won the game!`);
     } else {
       prompt(`It is a tie.`);
     }
   } else {
-    let winner = (loser === PLAYER_NAME) ? COMPUTER_NAME : PLAYER_NAME;
+    winner = (loser === PLAYER_NAME) ? COMPUTER_NAME : PLAYER_NAME;
     prompt(`${loser} busted.\n`);
     prompt(`${winner} won the game!`);
   }
   showHand(getHands, PLAYER_NAME, true);
   showHand(getHands, COMPUTER_NAME, true);
+  incrementGameScore(winner);
 }
 
 function getWinner(getHands) {
@@ -235,17 +257,63 @@ function doReplay() {
   return replay[0] === 'y';
 }
 
+function initializeGame() {
+  const GAME_INFO = {};
+  GAME_INFO[PLAYER_NAME] = 0;
+  GAME_INFO[COMPUTER_NAME] = 0;
+  GAME_INFO[null] = -Infinity;
+
+  const getGameScore = () => {
+    return [GAME_INFO[PLAYER_NAME], GAME_INFO[COMPUTER_NAME]];
+  };
+
+  const incrementGameScore = name => {
+    GAME_INFO[name] += 1;
+  };
+
+  return [getGameScore, incrementGameScore];
+}
+
+function toNextRound() {
+  console.log();
+  prompt('Please hit Enter to begin the next round.');
+  readline.question();
+}
+
+function showGameWinner(getGameScore) {
+  let [playerScore, computerScore] = [getGameScore()[0], getGameScore()[1]];
+  if (playerScore > computerScore) {
+    prompt(`You won ${ROUNDS_TO_WIN} rounds and won the game!`);
+  } else {
+    prompt(`${COMPUTER_NAME} won ${ROUNDS_TO_WIN} and won the game!`);
+  }
+}
+
 //
 
 do {
-  const GAMEINFO = initializeGame();
+  greet();
+  let roundsWon = 0;
+  const [getGameScore, incrementGameScore] = initializeGame();
 
-  let loser = runPlayerTurn(GAMEINFO);
+  do {
+    const ROUND_INFO = initializeRound();
 
-  if (!loser) {
-    loser = runComputerTurn(GAMEINFO);
-  }
+    let loser = runPlayerTurn(ROUND_INFO, getGameScore);
 
-  showWinner(loser, GAMEINFO.handInfo);
+    if (loser === null) {
+      loser = runComputerTurn(ROUND_INFO);
+    }
+
+    showRoundWinner(loser, ROUND_INFO.handInfo, incrementGameScore);
+
+    roundsWon = Math.max(...getGameScore());
+    if (roundsWon < ROUNDS_TO_WIN) toNextRound();
+
+  } while (roundsWon < ROUNDS_TO_WIN);
+
+  showGameWinner(getGameScore);
+
 } while (doReplay());
 
+prompt('Thank you for playing Twenty-One.');
