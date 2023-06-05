@@ -1,4 +1,4 @@
-/* 12 minutes
+/* 11 minutes
 
 PROBLEM
 =====
@@ -6,90 +6,75 @@ input : array
 output : array
 
 rules:
-input array has integers
+input array contains integers
 output array has two integers
-  the two integers of the input array that are closest together in value
+  the values are the two values in the input array that are closest together in value
 
-if more than one pair of numbers have the same difference
-  return the first occurring pair (searching left to right of array)
+if more than 2 pairs possible
+  return first pair
+order is relevant
+?? input array empty :: example does not cover :: assume input array is >= 2 length
 
-?? order of returned numbers relevant?
-  [15, 11] treated same as [11, 15]?
-    seems like no, numbers must appear in the order they appear in the input arr
-
-?? empty input array
-
-EXAMPLE
+EXAMPLES
 =====
-[5, 25, 15, 11, 20] => [15, 11] :: min difference of 4, 15 appears before 11
-[12, 7, 17] => [12, 7] :: same differences of 5, [12, 7] before [12, 17]
+[5, 25, 15, 11, 20] => [15, 11] :: order seems to matter
+[19, 25, 32, 4, 27, 16] => [25, 27]
+[12, 7, 17] => [12, 7] :: [12, 7] pair occurs before [12, 17] pair
 
-DATA STRUCTURES
+DATA STRUCTURE
 =====
 arrays
-
-general idea:
-get all permutations of 2 element value differences through array :: helper
-find the minimum difference
-iterate through input array :: helper?
-  first el vs. remaining els
-    if diff === min diff
-      return pair
-  second el vs. remaining els
-    repeat
 
 ALGORITHM
 =====
 declare function `closestNumbers` with parameter `inputArr`
-declare variable `outputArr` and init with empty array
 
-get all permutations of 2 element value differences through the input array
+find all possible pairs of numbers in `closestNumbers` :: helper
 
-declare variable `minDiff` and init with minimum difference from above
+declare variable `minDiff` and init with Infinity
+declare variable `keptPair` and init with empty value
 
-iterate through input array
-  start with first element
-    compare to the remaining elements as pairs
-      find difference
-        if difference === `minDiff`
-          return [firstEl, otherEl]
-  start with second element
-    repeat process
+iterate through all possible pairs of numbers
+  calculate the absolute difference of the pairs
+    if abs diff is lesser than `minDiff`
+      reassign `mindDiff` with this diff
+      reassign `keptPair` with this pair
+end iteration
+
+return `keptPair`
+*/
+
+/*
+helper function to get all possible pairs :: subarrays
+input : array
+output : array of arrays
+grab every adjacent element of input array and add to output array
 
 */
 
 function closestNumbers(inputArr) {
-  let outputArr = [];
+  let allPairs = getAllPairs(inputArr);
 
-  let allDiff = permuteDiff(inputArr);
-  let minDiff = Math.min(...allDiff);
+  let minDiff = Infinity;
+  let keptPair;
 
-  for (let startInd = 0; startInd < inputArr.length - 1; startInd += 1) {
-    let startVal = inputArr[startInd];
-    for (let endInd = startInd + 1; endInd < inputArr.length; endInd += 1) {
-      let endVal = inputArr[endInd];
-      let currDiff = Math.abs(startVal - endVal);
-      if (currDiff === minDiff) {
-        return [startVal, endVal];
-      }
+  for (let pair of allPairs) {
+    let diff = Math.abs(pair[0] - pair[1]);
+    if (diff < minDiff) {
+      minDiff = diff;
+      keptPair = pair;
     }
   }
+
+  return keptPair;
 }
 
-/*
-iterate through every element pair
-add absolute diff to array
-return array
-*/
-
-function permuteDiff(arr) {
+function getAllPairs(arr) {
   let outArr = [];
-  for (let startInd = 0; startInd < arr.length - 1; startInd += 1) {
-    let startVal = arr[startInd];
-    for (let endInd = startInd + 1; endInd < arr.length; endInd += 1) {
-      let endVal = arr[endInd];
-      let currDiff = Math.abs(startVal - endVal);
-      outArr.push(currDiff);
+  for (let ind1 = 0; ind1 < arr.length - 1; ind1 += 1) {
+    for (let ind2 = ind1 + 1; ind2 < arr.length; ind2 += 1) {
+      let subarr = [arr[ind1], arr[ind2]];
+      outArr.push(subarr);
     }
   }
   return outArr;

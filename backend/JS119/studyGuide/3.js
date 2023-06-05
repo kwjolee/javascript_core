@@ -1,78 +1,75 @@
-/* 13 minutes
+/* 12 minutes
 
 PROBLEM
 =====
 input : string
 output : string
 
-rules: 
-output string converts the input string
-  every second word
-    every 4th character
-      is uppercased
-all other characters remain
+rules:
+output string is constructed by
+  take the input string
+    every 2nd word
+      every 4th character
+        is uppercased
+  all other characters remain the same
 
-?? how are words separated in sentence string :: spaces
-?? what if input string is empty :: return empty string
-?? if word is less than 4 chars :: keep word as is
-?? if target char is already uppercase :: keep uppercase
+words are separated by space
 
 EXAMPLE
 =====
-'It is a long' => 'It is a lonG' :: g -> G
-'aaA bB c' => 'aaA bB c' :: all words < 4 char
-'Miss Mary Poppins word' => 'Miss MarY Poppins worD' :: y -> Y, d -> D
+'aaA bB c' => 'aaA bB c' // second word is 'bB' but there is no 4th char
+'Lorem Ipsum' => 'Lorem IpsUm' // second word is 'Ipsum' and 4th char is 'u' -> 'U'
 
-DATA STRUCTURES
+?? input string is empty => ''
+?? if there are multiple spaces between words => does not occur in examples
+
+DATA STRUCTURE
 =====
-strings, arrays
+arrays
 
 ALGORITHM
 =====
-declare function `toWeirdCase` with parameter `inputString`
+declare function `toWeirdCase` with parameter `inputStr`
 
-declare variable `outputArr` and init with empty array
+declare variable `inputStrArr` and init with
+  separate `inputStr` into words by splitting using single space
 
-split `inputString` into words
+declare variable `outputStrArr` and init with empty array
 
-iterate through every word of `inputString`
-  if word is one of every other word
-    iterate through every character of word
-      if character is one of every 4th char
-        capitalize character
-        add changed word to `outputArr`
-      if not then move to next word
-        add unchanged word to `outputArr`
-  if not then move to next word
-    add unchanged word to `outputArr`
+iterate through every `word` of `inputStrArr`
+  iterate through every `character` of `word`
+    if `word` is one of every other word
+      if `character` is one of every 4th character
+        make `character` uppercase
+  end iteration
+  construct `newWord` with the above criteria
+  add `newWord` to end of `outputStrArr`
 end iteration
 
-join `outputArr` into single string separated by space
+convert `outputStrArr` into single string by using single space as delimiter
 
-return `outputArr`
+return the converted string
 */
 
-function toWeirdCase(inputString) {
-  let outputArr = [];
+function toWeirdCase(inputStr) {
+  let inputStrArr = inputStr.split(" ");
+  
+  let outputStrArr = [];
 
-  let stringArr = inputString.split(" ");
-
-  stringArr.forEach((word, indOuter) => {
-    if (indOuter % 2 !== 0) {
-      let lettersArr = word.split("");
-      lettersArr.forEach((char, indInner) => {
-        if ((indInner + 1) % 4 === 0) {
-          lettersArr[indInner] = char.toUpperCase();
-        }
-      });
-      let newWord = lettersArr.join("");
-      outputArr.push(newWord);
-    } else {
-      outputArr.push(word);
+  inputStrArr.forEach((word, wordInd) => {
+    let newWord = "";
+    for (let charInd = 0; charInd < word.length; charInd += 1) {
+      let char = word[charInd];
+      if ((charInd + 1) % 4 === 0 && (wordInd + 1) % 2 === 0) {
+        newWord += char.toUpperCase();
+      } else {
+        newWord += char;
+      }
     }
+    outputStrArr.push(newWord);
   });
 
-  return outputArr.join(" ");
+  return outputStrArr.join(" ");
 }
 
 console.log(
