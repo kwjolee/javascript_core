@@ -1,67 +1,73 @@
-/* 12 minutes
+/*
 
 PROBLEM
 =====
 input : string
-output : string with "number words" replaced with digits
+output : string
 
-rules :
-  one => 1
-  two => 2
-  etc
+rules:
+replace the "number word" of the input string with actual digits
+return this converted string
+
+words are separated by space
 
 EXAMPLE
 =====
-one => 1
-two => 2
+five => 5
+four => 4
+four. => 4.
 
 DATA STRUCTURE
-arrays
+=====
+object : pairs of "number words" and their digits
 
 ALGORITHM
-declare function `wordToDigit` with parameter `string`
-declare variable `words` and init with : split `string` into array of words separated by space
-iterate through `words`
-  if word is a "number word", replace word with digit
-  if not, keep word
-convert `words` to strings separated by space and return
+=====
+declare function `wordToDigit` with parameter `inputStr`
+
+declare variable `wordDigitPair` and init with object:
+  properties are all the "number words"
+  corresponding values are digits (in string form) // "5" not 5
+
+declare variable `outputStr` and init with `inputStr`
+
+iterate through every property of `wordDigitPair`
+  replace the substring in `outputStr` that matches the property
+    with the value of that property
+  reassign `outputStr` with this updated string
+
+  repeat the above as long as property occurs in `outputStr`
+end iteration
+
+return outputStr
 */
 
-// eslint-disable-next-line max-lines-per-function
-function wordToDigit(string) {
-  let words = string.split(" ");
-  const template = {
-    one: '1',
-    two: '2',
-    three: '3',
-    four: '4',
-    five: '5',
-    six: '6',
-    seven: '7',
-    eight: '8',
-    nine: '9',
-    zero: '0'
+function wordToDigit(inputStr) {
+  const wordDigitPair = {
+    "zero": "0",
+    "one": "1",
+    "two": "2",
+    "three": "3",
+    "four": "4",
+    "five": "5",
+    "six": "6",
+    "seven": "7",
+    "eight": "8",
+    "nine": "9"
   };
-  const numberWords = Object.keys(template);
 
-  return words.map(word => {
-    let numberWordIncluded;
-    let includedNumberWord;
-    for (let numberWord of numberWords) {
-      if (word.includes(numberWord)) {
-        numberWordIncluded = true;
-        includedNumberWord = numberWord;
-        break;
-      }
-    }
+  let props = Object.keys(wordDigitPair);
 
-    if (numberWordIncluded) {
-      return word.replace(includedNumberWord, template[includedNumberWord]);
-    } else {
-      return word;
+  let outputStr = inputStr;
+
+  for (let numberWord of props) {
+    let digit = wordDigitPair[numberWord];
+
+    while (outputStr.includes(numberWord)) {
+      outputStr = outputStr.replace(numberWord, digit);
     }
-  }).join(" ");
+  }
+  return outputStr;
 }
 
 console.log(wordToDigit('Please call me at five five five one two three four. Thanks.'));
-// "Please call me at 5 5 5 1 2 3 4. Thanks."

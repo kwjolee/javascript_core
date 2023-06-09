@@ -1,60 +1,64 @@
-/* 18 minutes
+/*
 
 PROBLEM
 =====
-input : number (of digits)
-output : number (index)
+input : number
+output : number
 
 rules:
-function accepts a number which represents the number of digits in a fibonacci number
-function returns a number which represents the index of the first fibonacci number with that many digits
-first fibonacci number has index of 1
+output number is the nth fibonacci number
+  that has the number of digits that match the input number
 
 EXAMPLE
 =====
-fibonacci sequence
-1, 1, 2, 3, 5, 8, 13, 21
+2 => 7
+2 means look for the first fibonacci number that has 2 digits
+this is 13 which is the 7th fibonacci number
+return 7
 
-1 is the first fibonacci number with 1 digit, so an input of 1 would return 1
-13 is the first fibonacci number with 2 digits, so an input of 2 would return 7
+3 => 12
+first 3 digit fibo number is 144
+144 is the 12th fibo number
+return 12
 
-findFibonacciIndexByLength(2n) === 7n
+* use BigInt
 
 DATA STRUCTURE
 =====
-arrays
+array : list of fibonacci number
 
 ALGORITHM
 =====
-declare function `findFibonacciIndexByLength` with one argument `digits`
-if `digits` is 1, then return 1n;
-declare variable `fibonacciNumbers` and init with [1, 1]
-add the last two elements of `fibonacciNumbers` and add to the end of `fibonacciNumbers` as an element
-if the added element has `digits` many digits, then return the length of the `fibonacciNumbers` array
-if the number of digits of the added element is greater than `digits`, then return null
-  to check the number of digits of an element, check the length of the string version of it
+declare function `findFibonacciIndexByLength` with parameter `digits`
+
+if `digits` is 1, return 1 ** first 2 fibo numbers are 1 by default
+  3rd fibo number would be in index position 2 of fibo number list
+
+declare variable `fibo` and init with two element array whose values are both 1
+
+declare variable `nth` and init with 3
+
+repeat
+  declare variable `nextFibo` and init with the sum of the last two elements of `fibo`
+  if `nextFibo` has number of digits that match `digits`
+    return `nth`
+  if not
+    add `nextFibo` to end of `fibo`
+    increment `nth` by 1
+repeat
 
 */
 
 function findFibonacciIndexByLength(digits) {
-  if (digits === 1n) return 1n;
-  let fibonacciNumbers = [1n, 1n];
-  while (true) {
-    let newNumber = fibonacciNumbers.slice(fibonacciNumbers.length - 2).reduce((acc, val) => acc + val, 0n);
-    fibonacciNumbers.push(newNumber);
-    if (BigInt(String(newNumber).length) === digits)
-    break;
+  if (digits === 1) return 1;
+
+  let fibo = [1n, 1n];
+
+  for (let nth = 3; true; nth += 1) {
+    let nextFibo = fibo[nth - 3] + fibo[nth - 2];
+    if (String(nextFibo).length === digits) return nth;
+    fibo.push(nextFibo);
   }
-  return BigInt(fibonacciNumbers.length);
 }
 
-console.log('rerun');
-// console.log(findFibonacciIndexByLength(2n) === 7n);    // 1 1 2 3 5 8 13
-// console.log(findFibonacciIndexByLength(3n) === 12n);   // 1 1 2 3 5 8 13 21 34 55 89 144
-// console.log(findFibonacciIndexByLength(10n) === 45n);
-// console.log(findFibonacciIndexByLength(16n) === 74n);
-// console.log(findFibonacciIndexByLength(100n) === 476n);
-// console.log(findFibonacciIndexByLength(1000n) === 4782n);
-// console.log(findFibonacciIndexByLength(10000n) === 47847n);
-
-// The last example may take a minute or so to run.
+console.log(findFibonacciIndexByLength(10000))

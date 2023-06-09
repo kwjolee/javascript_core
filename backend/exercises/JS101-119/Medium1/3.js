@@ -1,89 +1,30 @@
-/* 30 minutes
 
-PROBLEM
-=====
-input : number
-output : rotated number
+function rotateRightmostDigits(baseNum, rotDigits) {
+  if (rotDigits <= 0) return baseNum;
+  if (rotDigits > String(baseNum).length) return null;
 
-rules:
-the input number is rotated maximally
-the first digit is in place and the remaining digits rotate to the left
-with the resulting rotated digit, first two digits are in place and remaining digits rotated
-...continue until the final two digits get rotated
+  let baseDigits = String(baseNum).split("");
 
-if input number is 1 digit, then same digit is returned
-if input number is 2 digits, then digits are swapped
+  let toRotate = baseDigits.slice(-rotDigits);
+  let notRotate = baseDigits.slice(0, baseDigits.length - rotDigits);
 
-EXAMPLES
-=====
-maxRotation(3);               // 3
-maxRotation(35);              // 53
-maxRotation(105);             // 15 -- the leading zero gets dropped
-maxRotation(735291);          // 321579
+  toRotate.push(toRotate.shift());
 
-DATA STRUCTURE
-=====
-arrays
+  let rotated = notRotate.concat(toRotate);
+  let rotatedNum = Number(rotated.join(""));
 
-ALGORITHM
-=====
-declare function `maxRotation` with one parameter `number`
-declare variable `numberStr` and init with string version of `number`
-if length of `numberStr` is 1, then return `numberStr` in number form
-if length of `numberStr` is 2, then return `numberStr` element swapped in number form
-
-declare variable `digitsToRotate` and init with (length of `numberStr` - 1)
-declare variable `rotatedNumber` and init with empty string
-declare variable `remainingDigits` and init with `numberStr`
-
-enter while loop
-  if digitsToRotate is greater than 2
-    add first digit of `remainingDigits` to `rotatedNumber`
-    rotate `remainingDigits` and reassign `remainingDigits` with it
-    reassign `digitsToRotate` with length of `remainingDigits` - 1
-  break of digitsToRotate is less than 2
-
-return `rotatedNumber`
-*/
+  return rotatedNum;
+}
 
 function maxRotation(number) {
-  let numberStr = String(number);
-  if (numberStr.length === 1) return Number(numberStr);
-  if (numberStr.length === 2) return Number(rotateRightmostDigits(numberStr, 2));
+  let rotDigit = String(number).length;
 
-  let digitsToRotate = numberStr.length - 1;
-  let rotatedNumber = '';
-  let remainingDigits = numberStr;
-
-  while (digitsToRotate >= 2) {
-    remainingDigits = rotateRightmostDigits(remainingDigits, remainingDigits.length);
-    rotatedNumber += remainingDigits[0];
-    remainingDigits = remainingDigits.slice(1);
-    digitsToRotate -= 1;
+  while (rotDigit > 1) {
+    number = rotateRightmostDigits(number, rotDigit);
+    rotDigit -= 1;
+    // console.log({number});
   }
-  return Number(rotatedNumber + rotateRightmostDigits(remainingDigits, 2));
-}
-
-function rotateArray(arr) {
-  if (!Array.isArray(arr)) return undefined;
-  if (arr.length === 0) return [];
-
-  let outArr = arr.slice();
-  let firstEl = outArr.shift();
-  outArr.push(firstEl);
-
-  return outArr;
-}
-
-function rotateRightmostDigits(number, count) {
-  let numberStr = String(number);
-  let countDigits = numberStr.slice(numberStr.length - count);
-  let leadDigits = numberStr.slice(0, numberStr.length - count);
-  let rotatedCountDigits = rotateArray(countDigits.split("")).join("");
-
-  let rotatedNumber = (leadDigits + rotatedCountDigits);
-
-  return rotatedNumber;
+  return number;
 }
 
 console.log(maxRotation(735291));          // 321579

@@ -1,4 +1,4 @@
-/* 12 minutes
+/*
 
 PROBLEM
 =====
@@ -6,22 +6,20 @@ input : string
 output : string
 
 rules:
-output string is constructed by
-  take the input string
-    every 2nd word
-      every 4th character
-        is uppercased
+output string is the input string reconstructed as:
+  every second word
+    every 4th character
+      is uppercase
   all other characters remain the same
 
-words are separated by space
+?? how are words separated :: by space
+?? what if input string is empty :: don't worry about it :: ""
 
 EXAMPLE
 =====
-'aaA bB c' => 'aaA bB c' // second word is 'bB' but there is no 4th char
-'Lorem Ipsum' => 'Lorem IpsUm' // second word is 'Ipsum' and 4th char is 'u' -> 'U'
-
-?? input string is empty => ''
-?? if there are multiple spaces between words => does not occur in examples
+"Lorem Ipsum" => "Lorem IpsUm"
+"It is a long" => "It is a lonG"
+"Miss Mary Poppins word" => "Miss MarY Poppins worD"
 
 DATA STRUCTURE
 =====
@@ -31,45 +29,44 @@ ALGORITHM
 =====
 declare function `toWeirdCase` with parameter `inputStr`
 
-declare variable `inputStrArr` and init with
-  separate `inputStr` into words by splitting using single space
+declare variable `words` and init with:
+  array of words in `inputStr`
+    words are separated by space
 
-declare variable `outputStrArr` and init with empty array
+declare variable `newWords` and init with empty array
 
-iterate through every `word` of `inputStrArr`
-  iterate through every `character` of `word`
-    if `word` is one of every other word
-      if `character` is one of every 4th character
-        make `character` uppercase
-  end iteration
-  construct `newWord` with the above criteria
-  add `newWord` to end of `outputStrArr`
+iterate through every `word` of `words`
+  if the `word` is every other word
+    iterate through every `char`acter of `word`
+      if `char` is every 4th character of `word`
+        capitalize `char`
+    end iteration
+  add this reconstructed word to the end of `newWords`
 end iteration
 
-convert `outputStrArr` into single string by using single space as delimiter
-
-return the converted string
+convert `newWords` to a single string using a single space as delimiter
+return this converted string
 */
 
 function toWeirdCase(inputStr) {
-  let inputStrArr = inputStr.split(" ");
-  
-  let outputStrArr = [];
+  let words = inputStr.split(" ");
 
-  inputStrArr.forEach((word, wordInd) => {
-    let newWord = "";
-    for (let charInd = 0; charInd < word.length; charInd += 1) {
-      let char = word[charInd];
-      if ((charInd + 1) % 4 === 0 && (wordInd + 1) % 2 === 0) {
-        newWord += char.toUpperCase();
-      } else {
-        newWord += char;
-      }
+  let newWords = [];
+
+  words.forEach((word, wordInd) => {
+    if ((wordInd + 1) % 2 === 0) {
+      let wordArr = word.split("");
+      wordArr.forEach((char, charInd) => {
+        if ((charInd + 1) % 4 === 0) {
+          wordArr[charInd] = char.toUpperCase();
+        }
+      });
+      newWords.push(wordArr.join(""));
+    } else {
+      newWords.push(word);
     }
-    outputStrArr.push(newWord);
   });
-
-  return outputStrArr.join(" ");
+  return newWords.join(" ");
 }
 
 console.log(

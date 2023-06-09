@@ -1,97 +1,69 @@
-/* 16 minutes
+/*
 
 PROBLEM
 =====
 input : string
 output : string
 
-rules :
-input string contains characters :: can be any character
-output string contains one character
-  the character that occurs least frequently in the input string
-  case insensitive
-  if multiple chars have same # of min occur, then return first occurring char
-  spaces and special chars are included in this counting
-  return char is in lowercase form
+rules:
+output string is
+  the character in the input string
+    that occurs the least number of times
+      in lowercase form
+
+if there is a tie of minimum occurrence
+  output string is
+    the character that occurs first in the input string
+
+when counting characters, case is not senstive
+
+?? spaces :: count as char
+?? input string is empty :: ""
+?? special characters :: count as char
 
 EXAMPLE
 =====
-'Hello World' => 'h'
-'Mississippi" => 'm'
-'Happy birthday!' => ' '
-'aaaaaaAAAA' => 'a'
+"Hello world" => "h"
+"Mississippi" => "m"
+"Happy birthday!" => " "
 
 DATA STRUCTURE
 =====
-arrays, objects, strings*
+arrays
 
 ALGORITHM
 =====
-declare function `leastCommonChar` with parameter `inputString`
+declare function `leastCommonChar` with parameter `inputStr`
 
-declare variable `charCounts` and init with empty object :: helper
-iterate through all characters of input string
-  add each character as property of `charCounts`
-  value of that property will be how many times char occurs in `inputString`
+reassign `inputStr` with lowercase form of itself
+
+declare variable `minCount` and init with Infinity
+declare variable `candidate`
+
+iterate through every `char`acter of `inputStr`
+  count how many times this `char` occurs in `inputStr` :: helper
+  if this count is is less than `minCount`
+    reassign `minCount` with this count
+    reassign `candidate` with this `char`
 end iteration
 
-declare variable `minCount` and init with minimum count value :: helper
-
-declare variable `candidates` and init with empty array
-iterate through values of `charCounts`
-  if value is equal to `minCount`
-    add corresponding property (letter) to `candidates`
-end iteration
-
-iterate through letters in `candidates`
-  find the letter that has the lowest first occurrence index
-  return letter
-end iteration
-
+return `candidate`
 */
+function leastCommonChar(inputStr) {
+  inputStr = inputStr.toLowerCase();
 
-function getMinCount(obj) {
-  let values = Object.values(obj);
-  return Math.min(...values);
-}
+  let minCount = Infinity;
+  let candidate;
 
-function countChars(str) {
-  let charCounts = {};
-  for (let char of str) {
-    charCounts[char] = charCounts[char] + 1 || 1;
+  for (let char of inputStr) {
+    let count = countOccurrence(char, inputStr);
+    if (count < minCount) {
+      minCount = count;
+      candidate = char;
+    }
   }
-  return charCounts;
-}
 
-function getCandidates(obj, mincount) {
-  let candidates = [];
-  let pairs = Object.entries(obj);
-  for (let pair of pairs) {
-    if (pair[1] === mincount) candidates.push(pair[0]);
-  }
-  return candidates;
-}
-
-function getLowestIndex(candidates, string) {
-  let indexes = [];
-  for (let letter of candidates) {
-    let ind = string.indexOf(letter);
-    indexes.push(ind);
-  }
-  return Math.min(...indexes);
-}
-
-function leastCommonChar(inputString) {
-  let lowetString = inputString.toLowerCase();
-  let charCounts = countChars(lowetString);
-  let minCount = getMinCount(charCounts);
-
-  let candidates = getCandidates(charCounts, minCount);
-  let lowestIndex = getLowestIndex(candidates, lowetString);
-
-  let lowestChar = inputString[lowestIndex].toLowerCase();
-  return lowestChar;
-
+  return candidate;
 }
 
 console.log(leastCommonChar("Hello World") === "h");
@@ -100,3 +72,17 @@ console.log(leastCommonChar("Peter Piper picked a peck of pickled peppers") ===
 console.log(leastCommonChar("Mississippi") === "m");
 console.log(leastCommonChar("Happy birthday!") === ' ');
 console.log(leastCommonChar("aaaaaAAAA") === 'a');
+
+/* helper :: countOccurrence
+input : char, string
+output : number
+split string into array of characters
+filter that array to characters that are input `char`
+return the length of this filtered array
+*/
+
+function countOccurrence(char, string) {
+  let arr = string.split("");
+  arr = arr.filter(val => val === char);
+  return arr.length;
+}

@@ -52,6 +52,8 @@ add "#" to beginning of converted string
 */
 
 function generateHashtag(str) {
+  const LENGTH_LIMIT = 140;
+
   str = str.trim();
   while (str.includes("  ")) {
     str = str.replace("  ", " ");
@@ -70,8 +72,17 @@ function generateHashtag(str) {
   let hashString = hashWord.join("");
   let hashTag = "#" + hashString;
 
-  if (hashTag.length > 140) return false;
+  if (hashTag.length > LENGTH_LIMIT) return false;
   return hashTag;
 }
 
-console.log(generateHashtag(" "));
+console.log(generateHashtag("") === false);
+console.log(generateHashtag(" ".repeat(200)) === false);
+console.log(generateHashtag("Do We have A Hashtag") === "#DoWeHaveAHashtag");
+console.log(generateHashtag("Codewars") === "#Codewars");
+console.log(generateHashtag("Codewars Is Nice") === "#CodewarsIsNice");
+console.log(generateHashtag("Codewars is nice") === "#CodewarsIsNice");
+console.log(generateHashtag("code" + " ".repeat(140) + "wars") === "#CodeWars");
+console.log(generateHashtag("Looooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong Cat") === false);
+console.log(generateHashtag("a".repeat(139)) === "#A" + "a".repeat(138));
+console.log(generateHashtag("a".repeat(140)) === false);

@@ -1,23 +1,22 @@
-/* 8 minutes
+/*
 
 PROBLEM
 =====
 input : array
-output : number or `null`
+output : null or number
 
 rules:
-input array contains integers
-output number is determined by
-  sum 5 consecutive elements of input array
-    minimum sum across the full input array
-if input array has less than 5 elements
-  return `null`
+get the sum of 5 consecutive elements of the input array
+  return the minimum of these sums
 
-EXAMPLES
+input array only has integers
+if input array has less than 5 elements
+  return null
+
+EXAMPLE
 =====
-[1, 2, 3, 4] => `null`
-[1, 2, 3, 4, 5, -5] => [15, 9] => 9
-[] = > `null`
+[1, 2, 3, 4] => null
+[1, 2, 3, 4, 5, -5] => 9
 
 DATA STRUCTURE
 =====
@@ -27,34 +26,35 @@ ALGORITHM
 =====
 declare function `minimumSum` with parameter `inputArr`
 
-if length of `inputArr` is less than 5
+if `inputArr` has length less than 5
   return `null`
 
-declare variable `sums` and init with empty array
+declare variable `minSum` and init with Infinity
 
-iterate through subarrays of `inputArr`
-  `subArray` contains 5 consecutive elements of `inputArr`
-    5 consecutive index positions
-  sum the elelment values of `subArray`
-  add this sum to the end of `sums`
+iterate through every 5-element subarray of `inputArr`
+  declare variable `sum` and init with the sum of this subarray
+  if `sum` is less than `minSum`
+    reassign `minSum` with `sum`
 end iteration
 
-return the minimum value of `sums`
+return `minSum`
 */
 
 function minimumSum(inputArr) {
   if (inputArr.length < 5) return null;
 
-  let sums = [];
+  let minSum = Infinity;
 
-  for (let ind = 0; ind < inputArr.length - 4; ind += 1) {
+  for (let ind = 0; ind < (inputArr.length - 4); ind += 1) {
     let subArray = inputArr.slice(ind, ind + 5);
     let sum = subArray.reduce((acc, val) => acc + val, 0);
-    sums.push(sum);
+    if (sum < minSum) minSum = sum;
   }
-
-  return Math.min(...sums);
+  return minSum;
 }
 
-
-console.log(minimumSum([55, 2, 6, 5, 1, 2, 9, 3, 5, 100]));
+console.log(minimumSum([1, 2, 3, 4]) === null);
+console.log(minimumSum([1, 2, 3, 4, 5, -5]) === 9);
+console.log(minimumSum([1, 2, 3, 4, 5, 6]) === 15);
+console.log(minimumSum([55, 2, 6, 5, 1, 2, 9, 3, 5, 100]) === 16);
+console.log(minimumSum([-1, -5, -3, 0, -1, 2, -4]) === -10);

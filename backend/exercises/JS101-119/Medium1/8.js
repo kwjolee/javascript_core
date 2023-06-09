@@ -1,18 +1,15 @@
-/* 4 minutes
-
-PROBLEM
-=====
-
-*/
-
 function fibonacci(nth) {
-  if (nth === 1 || nth === 2) return 1;
-  let fibonacciNumbers = [1, 1];
-  while (fibonacciNumbers.length < nth) {
-    let newNumber = fibonacciNumbers.slice(fibonacciNumbers.length - 2).reduce((acc, val) => acc + val, 0);
-    fibonacciNumbers.push(newNumber);
+  let fibo = [1n, 1n];
+
+  while (fibo.length < nth) {
+    let nextFibo = fibo[fibo.length - 1] + fibo[fibo.length - 2];
+    fibo.push(nextFibo);
   }
-  return fibonacciNumbers[fibonacciNumbers.length - 1];
+
+  return fibo[fibo.length - 1];
 }
 
+console.log(fibonacci(20));
+console.log(fibonacci(50));
 console.log(fibonacci(75));
+console.log(fibonacci(40000));

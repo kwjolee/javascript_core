@@ -1,64 +1,62 @@
-/* 11 minutes
+/* 14 minutes
 
 PROBLEM
 =====
 input : two numbers
-  `number` : first number is the number to rotate
-  `count` : second number is how many digits to rotate
-output : rotated number
+output : number
 
 rules:
-  last `count` digits of `number` get rotated
-  rotation means : the last `count` many digits get rotated to the left while the remaining leading digits remain in place
+first input number is the base number
+second input number indicates the number of digits (last digits)
 
-EXAMPLE
+output number is
+  first input number
+    has the last x-digits (x being second input number)
+      rotated
+        rotated meaning first digit moved to the end
+
+EXAMPLES
 =====
-rotateRightmostDigits(735291, 1);      // 735291
-rotateRightmostDigits(735291, 2);      // 735219
-rotateRightmostDigits(735291, 3);      // 735912
-rotateRightmostDigits(735291, 4);      // 732915
-rotateRightmostDigits(735291, 5);      // 752913
-rotateRightmostDigits(735291, 6);      // 352917
 
 DATA STRUCTURE
+=====
 arrays
+  digits to not be rotated
+  digits to be rotated
 
 ALGORITHM
 =====
-declare function `rotateRightmostDigits`
-  first parameter : `number`
-  second parameter : `count`
+declare function `rotateRightmostDigits` with parameters `baseNum`, `rotDigits`
 
-declare variable `numberStr` and initialize with `number` coerced to a string
-declare variable `countDigits` and init with the last `count` characters of `number`
-declare variable `leadDigits` and init with the remaining characters of `number`
-  :if `count` is equal to the number of characters, then `leadDigits` will be an empty string
+declare variable `baseDigits` and init with array of digits of `baseNum`
 
-declare variable `rotatedCountDigits` and init with rotated version of `countDigits`
+declare variable `toRotate` and init with array of last `rotDigits` digits of `baseDigits`
+declare variable `notRotate` and init with the other portion of `baseDigits`
 
-concat `leadDigits` with `rotatedCountDigits` then return the Number version of it
+rotate `toRotate`
+  remove first element, then add it to the end of `toRotate`
+
+declare variable `rotated` and init with `notRotate` concatenated with `toRotate`
+
+merge `rotated` into single number by putting all the digits together
+return merged number
 */
 
-function rotateArray(arr) {
-  if (!Array.isArray(arr)) return undefined;
-  if (arr.length === 0) return [];
+function rotateRightmostDigits(baseNum, rotDigits) {
+  if (rotDigits <= 0) return baseNum;
+  if (rotDigits > String(baseNum).length) return null;
 
-  let outArr = arr.slice();
-  let firstEl = outArr.shift();
-  outArr.push(firstEl);
+  let baseDigits = String(baseNum).split("");
 
-  return outArr;
-}
+  let toRotate = baseDigits.slice(-rotDigits);
+  let notRotate = baseDigits.slice(0, baseDigits.length - rotDigits);
 
-function rotateRightmostDigits(number, count) {
-  let numberStr = String(number);
-  let countDigits = numberStr.slice(numberStr.length - count);
-  let leadDigits = numberStr.slice(0, numberStr.length - count);
-  let rotatedCountDigits = rotateArray(countDigits.split("")).join("");
+  toRotate.push(toRotate.shift());
 
-  let rotatedNumber = Number(leadDigits + rotatedCountDigits);
+  let rotated = notRotate.concat(toRotate);
+  let rotatedNum = Number(rotated.join(""));
 
-  return rotatedNumber;
+  return rotatedNum;
 }
 
 rotateRightmostDigits(735291, 1);      // 735291

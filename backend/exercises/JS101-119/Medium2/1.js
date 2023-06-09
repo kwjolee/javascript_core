@@ -1,59 +1,86 @@
-/* 8 minutes
+/*
 
 PROBLEM
 =====
 input : string
 output : object
-  three properties
-    lowercase: % of lowercase characters
-    uppercase: % of uppercase characters
-    neither: % of characters that are neighter
 
-rules :
-percentage is a numerical string rounded to 2 decimal places
-if no character meets the criteria, "0.00"
-string has at least one character
+the output object has three properties
+  1. % of chars that are lowercase
+  2. % of chars that are uppercase
+  3. % of chars that are neither :: numbers, punctuations, special chars, etc
+the percentages are strings
+the percentages are rounded to 2 decimal places
+
+?? what about spaces :: spaces count as "neither" character
 
 EXAMPLE
 =====
-'abCdef 123' // has 10 characters, 5 lower case, 1 cupper case, 4 neither
-'123' // has 3 characters, 3 neither
+"abCdef 123" => lowercase 50.00, uppercase 10.00, neither 40.00
 
 DATA STRUCTURE
 =====
-object
+object : the output object
+object : tracks number of char type occurrences (abs val)
 
 ALGORITHM
 =====
-declare function `letterPercentages` with one parameter `str`
-declare variable `obj` and init with obj with properties `lowercase`, `uppercase`, and `neither` whose values are all 0
-iterate through characters of `str`
-  if character is a lower chase alphabet, then increment lowercase value of `obj` by 1
-  if character is an upper case alphabet, then increment uppercase value of `obj` by 1
-  if character is neither, then increment neither value of `obj` by 1
-convert all values of `obj` to proper percentage form in string type
-return obj
+declare function `letterPercentages` with parameter `inputStr`
 
+declare variable `outputObj` and init with object with three properties
+  "lowercase", "uppercase", "neither"
+    whose values are null
+
+delcare variable `charCounts` and init with object with three properties
+  "lowercase", "uppercase", "neither"
+    whose values are 0s
+
+iterate through every character of `inputStr`
+  if character is lowercase
+    increment value of "lowercase" property of `charCounts` by 1
+  if character is uppercase
+    increment value of "uppercase" property of `charCounts` by 1
+  if neither
+    increment value of "neither" property of `charCounts` by 1
+end iteration
+
+for each of the three properties of `charCounts`
+  calculate the percentage of character type counts
+    by dividing the property value by the length of `inputStr`
+      then multiplying 100
+        then rounding to 2 decimal places
+          make this a string
+            place this string as the value for `outputObj` properties
+end
+
+return `outputObj`
 */
 
-function letterPercentages(str) {
-  let obj = {lowercase: 0, uppercase: 0, neither: 0};
-  for (let char of str.split("")) {
-    if (char.toLowerCase() === char.toUpperCase()) obj.neither += 1;
-    else if (char === char.toLowerCase()) obj.lowercase += 1;
-    else if (char === char.toUpperCase()) obj.uppercase += 1;
+function letterPercentages(inputStr) {
+  let outputObj = {lowercase: null, uppercase: null, neither: null};
+  let charCounts = {lowercase: 0, uppercase: 0, neither: 0};
+
+  // can refactor by writing subfunction to check cases
+  for (let char of inputStr) {
+    if (char.toLowerCase() === char.toUpperCase()) charCounts.neither += 1;
+    else if (char === char.toLowerCase()) charCounts.lowercase += 1;
+    else if (char === char.toUpperCase()) charCounts.uppercase += 1;
   }
-  obj.neither = ((obj.neither / str.length) * 100).toFixed(2);
-  obj.lowercase = ((obj.lowercase / str.length) * 100).toFixed(2);
-  obj.uppercase = ((obj.uppercase / str.length) * 100).toFixed(2);
-  return obj;
+
+  // can refactor by writing subfunction to convert to %
+  outputObj.lowercase = ((charCounts.lowercase * 100) / inputStr.length).toFixed(2);
+  outputObj.uppercase = ((charCounts.uppercase * 100) / inputStr.length).toFixed(2);
+  outputObj.neither = ((charCounts.neither * 100) / inputStr.length).toFixed(2);
+  //
+
+  return outputObj;
 }
 
-console.log(letterPercentages('abCdef 123'));
+letterPercentages('abCdef 123');
 // { lowercase: "50.00", uppercase: "10.00", neither: "40.00" }
 
-console.log(letterPercentages('AbCd +Ef'));
+letterPercentages('AbCd +Ef');
 // { lowercase: "37.50", uppercase: "37.50", neither: "25.00" }
 
-console.log(letterPercentages('123'));
+letterPercentages('123');
 // { lowercase: "0.00", uppercase: "0.00", neither: "100.00" }

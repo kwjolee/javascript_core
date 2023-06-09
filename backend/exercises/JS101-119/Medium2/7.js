@@ -1,25 +1,21 @@
 function bubbleSort(arr) {
-  let swapped;
-  do {
+  let swapped = true;
+
+  while (swapped) {
     swapped = false;
-    for (let ind = 0; ind < arr.length - 1; ind += 1) {
-      if (arr[ind] > arr[ind + 1]) {
-        [arr[ind], arr[ind + 1]] = [arr[ind + 1], arr[ind]];
+    for (let ind1 = 0; ind1 < arr.length - 1; ind1 += 1) {
+      let ind2 = ind1 + 1;
+      let val1 = arr[ind1];
+      let val2 = arr[ind2];
+      console.log({ind1, val1, val2})
+      if (val1 > val2) {
+        [arr[ind1], arr[ind2]] = [arr[ind2], arr[ind1]];
         swapped = true;
       }
     }
-  } while (swapped);
+  }
+
   return arr;
 }
 
-// let array1 = [5, 3];
-// bubbleSort(array1);
-// console.log(array1);    // [3, 5]
-
-// let array2 = [6, 2, 7, 1, 4];
-// bubbleSort(array2);
-// console.log(array2);    // [1, 2, 4, 6, 7]
-
-let array3 = ['Sue', 'Pete', 'Alice', 'Tyler', 'Rachel', 'Kim', 'Bonnie'];
-bubbleSort(array3);
-console.log(array3);    // ["Alice", "Bonnie", "Kim", "Pete", "Rachel", "Sue", "Tyler"]
+console.log(bubbleSort(['Sue', 'Pete', 'Alice', 'Tyler', 'Rachel', 'Kim', 'Bonnie']))

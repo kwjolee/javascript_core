@@ -79,7 +79,7 @@ function ScrambleWords(str) {
     for (let ind = 0; ind < word.length; ind += 1) {
       let char = word[ind];
       if (punctuation.includes(char)) {
-        specChar.push([char, ind]);
+        specChar.push([ind, char]);
         filtWord = filtWord.replace(char, "");
       }
     }
@@ -88,9 +88,11 @@ function ScrambleWords(str) {
     let endWord = filtWord[0] + sortMidWord + filtWord[filtWord.length - 1];
     let endWordArr = endWord.split("");
 
-    let char = specChar[0][0];
-    let ind = specChar[0][1];
-    endWordArr.splice(ind, 0, char);
+    for (let puncInfo of specChar) {
+      let ind = puncInfo[0];
+      let char = puncInfo[1];
+      endWordArr.splice(ind, 0, char);
+    }
 
     let endWordFin = endWordArr.join("");
     newWords.push(endWordFin);
@@ -100,3 +102,4 @@ function ScrambleWords(str) {
   return newString;
 }
 
+console.log(ScrambleWords("you've gotta dance like there's nobody watching, love like you'll never be hurt, sing like there's nobody listening, and live like it's heaven on earth."));

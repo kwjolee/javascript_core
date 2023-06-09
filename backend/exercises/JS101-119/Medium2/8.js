@@ -1,28 +1,34 @@
-function longestSentence(text) {
-  let sentences = [];
-  while (text.length > 0) {
-    let periodInd = text.indexOf('.');
-    let exclInd = text.indexOf('!');
-    let quesInd = text.indexOf('?');
-    let indArr = [periodInd, exclInd, quesInd];
+/*
 
-    if (Math.max(...indArr) === -1) break;
+sentence has words
+words are separated by spaces
+words may have sentence ending characters such as . or ? or !
+print the longest sentence based on word count (not char count)
+*/
 
-    let sentInd = Math.min(...indArr.filter(val => val > -1));
-    let sentence = text.slice(0, sentInd + 1);
-    sentences.push(sentence);
-    text = text.slice(sentInd + 1);
+function longestSentence(string) {
+  let outStr = [];
+  let inArr = string.split(" ");
+  let prevMaxWordCount = -Infinity;
+  let sentence = [];
+
+  for (let word of inArr) {
+    outStr.push(word);
+    if (word.includes(".") || word.includes("?") || word.includes("!")) {
+      if (outStr.length > prevMaxWordCount) {
+        sentence = outStr;
+        prevMaxWordCount = sentence.length;
+        outStr = [];
+      } else {
+        outStr = [];
+      }
+    }
   }
 
-  let wordCounts = sentences.map(sentence => sentence.split(" ").length);
-  let maxWords = Math.max(...wordCounts);
-  let sentenceInd = wordCounts.indexOf(maxWords);
-
-  console.log(sentences[sentenceInd]);
-  console.log();
-  console.log(`The longest sentence has ${maxWords} words.`);
-  console.log();
+  return sentence.join(" ");
 }
+
+
 
 
 let longText =
@@ -52,22 +58,22 @@ let longerText = longText +
   'and that government of the people, by the people, for the people, ' +
   'shall not perish from the earth.';
 
-longestSentence(longText);
+console.log(longestSentence(longText));
 // Four score and seven years ago our fathers brought forth on this continent a new nation, conceived in liberty, and dedicated to the proposition that all men are created equal.
 //
 // The longest sentence has 30 words.
 
-longestSentence(longerText);
+console.log(longestSentence(longerText));
 // It is rather for us to be here dedicated to the great task remaining before us -- that from these honored dead we take increased devotion to that cause for which they gave the last full measure of devotion -- that we here highly resolve that these dead shall not have died in vain -- that this nation, under God, shall have a new birth of freedom -- and that government of the people, by the people, for the people, shall not perish from the earth.
 //
 // The longest sentence has 86 words.
 
-longestSentence("Where do you think you're going? What's up, Doc?");
+console.log(longestSentence("Where do you think you're going? What's up, Doc?"));
 // Where do you think you're going?
 //
 // The longest sentence has 6 words.
 
-longestSentence("To be or not to be! Is that the question?");
+console.log(longestSentence("To be or not to be! Is that the question?"));
 // To be or not to be!
 //
 // The longest sentence has 6 words.

@@ -1,4 +1,4 @@
-/* 11 minutes
+/* 12
 
 PROBLEM
 =====
@@ -6,20 +6,17 @@ input : array
 output : array
 
 rules:
-input array contains integers
-output array has two integers
-  the values are the two values in the input array that are closest together in value
+output array is constructed by:
+  the two elements in the input array that are
+    closest together in value (abs diff)
 
-if more than 2 pairs possible
-  return first pair
-order is relevant
-?? input array empty :: example does not cover :: assume input array is >= 2 length
+?? tiebreaker/ :: first occurring pair
 
-EXAMPLES
+EXAMPLE
 =====
-[5, 25, 15, 11, 20] => [15, 11] :: order seems to matter
-[19, 25, 32, 4, 27, 16] => [25, 27]
-[12, 7, 17] => [12, 7] :: [12, 7] pair occurs before [12, 17] pair
+[12, 7, 17] :: |12 - 7| = 5, |12 - 17| = 5
+                  ***
+                  occurs first
 
 DATA STRUCTURE
 =====
@@ -29,57 +26,65 @@ ALGORITHM
 =====
 declare function `closestNumbers` with parameter `inputArr`
 
-find all possible pairs of numbers in `closestNumbers` :: helper
+declare variable `allPairs` and init with
+  * get every pair of elements in `inputArr` :: array :: helper
 
 declare variable `minDiff` and init with Infinity
-declare variable `keptPair` and init with empty value
+declare variable `candidate` and init with nothing
 
-iterate through all possible pairs of numbers
-  calculate the absolute difference of the pairs
-    if abs diff is lesser than `minDiff`
-      reassign `mindDiff` with this diff
-      reassign `keptPair` with this pair
+iterate through every pair of elements in `allPairs`
+  calculate the absolute difference between the pair elements
+  if this difference is less than `minDiff`
+    reassign `minDiff` with this difference
+    reassign `candidate` with this pair
 end iteration
 
-return `keptPair`
-*/
-
-/*
-helper function to get all possible pairs :: subarrays
-input : array
-output : array of arrays
-grab every adjacent element of input array and add to output array
-
+return `candidate`
 */
 
 function closestNumbers(inputArr) {
   let allPairs = getAllPairs(inputArr);
 
   let minDiff = Infinity;
-  let keptPair;
+  let candidate;
 
   for (let pair of allPairs) {
     let diff = Math.abs(pair[0] - pair[1]);
     if (diff < minDiff) {
       minDiff = diff;
-      keptPair = pair;
+      candidate = pair;
     }
   }
 
-  return keptPair;
-}
-
-function getAllPairs(arr) {
-  let outArr = [];
-  for (let ind1 = 0; ind1 < arr.length - 1; ind1 += 1) {
-    for (let ind2 = ind1 + 1; ind2 < arr.length; ind2 += 1) {
-      let subarr = [arr[ind1], arr[ind2]];
-      outArr.push(subarr);
-    }
-  }
-  return outArr;
+  return candidate;
 }
 
 console.log(closestNumbers([5, 25, 15, 11, 20]));     // [15, 11]
 console.log(closestNumbers([19, 25, 32, 4, 27, 16])); // [25, 27]
 console.log(closestNumbers([12, 7, 17]));             // [12, 7]
+
+function getAllPairs(inputArr) {
+  let outArr = [];
+  for (let ind1 = 0; ind1 < inputArr.length - 1; ind1 += 1) {
+    for (let ind2 = ind1 + 1; ind2 < inputArr.length; ind2 += 1) {
+      outArr.push([inputArr[ind1], inputArr[ind2]]);
+    }
+  }
+  return outArr;
+}
+
+
+/*
+input : array
+output : array of arrays
+output array consists of all possible pairs of input array
+create a holder array
+iterate through every index of input array
+  iterate through every index of rest of the array
+    create an array with values at the two indices in order
+    add this array to the end of the holder array
+  end iteration
+end iteration
+return holder array
+*/
+

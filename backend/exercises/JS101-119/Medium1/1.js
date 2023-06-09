@@ -1,49 +1,60 @@
-/* 8 minutes
+/* 9 minutes
 
 PROBLEM
 =====
-input : array of any values
-output : array where the first element of the input array is moved to the end
+input : array
+output : array
 
-- do not modify the original array
-- if input is not an array, return `undefined`
-- if input is empty array, return an empty array
+rules:
+move the first element of the input array
+  to the end of the input array
+return this modified array
+  do not mutate the original input array
+
+if input is not an array, return undefined
+if input is an empty array, return empty array
+?? is this empty array the same array as the input array or is it a new empty array?
+  worry about it later
 
 EXAMPLE
 =====
+[7, 3, 5, 2, 9, 1] => [3, 5, 2, 9, 1, 7]
 [] => []
-1 => undefined
-[1, 2, 3, 4] => [2, 3, 4, 1]
+"a" => undefined
 
 DATA STRUCTURE
 =====
-arrays
+array : copy of input array
 
 ALGORITHM
 =====
-declare function `rotateArray`
-check if input is an array
-  if no, return `undefined`
-  if yes, check if array is empty
-    if yes, return empty array
-    if no, then do the following
-declare variable `outArr` and initialize it with a shallow copy of input array
-declare variable `firstEl` and initialize it with:
-  remove first element of `outArr`
-add `firstEl` to the end of `outArr`
-return `outArr`
+declare function `rotateArray` with parameter `inputArr`
 
+if `inputArr` is not an array
+  return undefined
+if `inputArr` is empty
+  return empty array ** new empty array or original input array that is empty?
+
+declare variable `outputArr` and init with shallow copy of `inputArr`
+
+declare variable `removed` and init with
+  remove the first element of `outputArr`
+
+add `removed` to the end of `outputArr`
+
+return `outputArr`
 */
 
-function rotateArray(arr) {
-  if (!Array.isArray(arr)) return undefined;
-  if (arr.length === 0) return [];
+function rotateArray(inputArr) {
+  if (!Array.isArray(inputArr)) return undefined;
+  if (inputArr.length === 0) return inputArr;
 
-  let outArr = arr.slice();
-  let firstEl = outArr.shift();
-  outArr.push(firstEl);
+  let outputArr = inputArr.slice();
 
-  return outArr;
+  let removed = outputArr.shift();
+  outputArr.push(removed);
+
+  return outputArr;
 }
 
 rotateArray([7, 3, 5, 2, 9, 1]);       // [3, 5, 2, 9, 1, 7]
@@ -61,4 +72,4 @@ rotateArray(1);                        // undefined
 // the input array is not mutated
 let array = [1, 2, 3, 4];
 rotateArray(array);                    // [2, 3, 4, 1]
-console.log(array);                                 // [1, 2, 3, 4]
+array;                                 // [1, 2, 3, 4]
