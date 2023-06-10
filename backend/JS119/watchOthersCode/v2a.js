@@ -1,63 +1,62 @@
-/* 15 minutes
+/*
 
 PROBLEM
 =====
-
 input : string
 output : boolean
 
 rules:
-if a substring of the input string can be repeated any number of times to create the input string
-  return true
-otherwise
+if the input string can be reconstructed by
+  appending multiple copies of it substring
+    return true
+if not
   return false
+
+?? is a string also a substring of itself :: no
 
 EXAMPLE
 =====
-"abab" => true since "ab" repeats twice
-"aba" => false since it does not repeat
-"aabaaba" => false since it does not repeat
+"abab" => true : ab twice
+"aba" => false : aba is not a valid substring of aba
 
 DATA STRUCTURE
 =====
-probably arrays
-
-general idea:
-by nature of the problem, a valid substring must overlap with the start of the input string
-first use the first char of input string and see if that can be repeated to make string
-  keep concatenating as long as concat string is shorter than input string
-    if concat string is equal length then it's the input string not substring
-then use first two chars of input string and see if that can be repeated to make string
-  repeat until substring length is more than half the input string length
-if match is found, return true
-if match is not found, return false
+arrays : list of substrings
 
 ALGORITHM
 =====
-declare function `repeatedSubstringPattern` with parameter `inputString`
-declare variable `numChars` and init with 1
-iterate through the substrings of `inputString`
-  declare variable `substr` and init with first `numChars` characters of `inputString`
-  declare variable `repeats` and init with 1
-  repeat `substr` `repeats`-many times and check against `inputString`
-    if not match, increment `repeats` by 1
-    if match, return `true`
-  if not match, increment `numChars` by 1 and repeat loop
-  if `numChars` exceeds half the length of `inputString`, return `false`
+declare function `repeatedSubstringPattern` with parameter `inputStr`
+
+declare variable `substrings` and init with array of substrings of `inputStr` :: do not include `inputStr` itself
+
+iterate through every `substring` of `substrings`
+  if `substring` can be repeated any number of times to make `inputStr`
+    return true
+      repeating of `substring` stops if the repeated substring length is greater than inputstr
+end iteration
+return false
 */
 
-function repeatedSubstringPattern(inputString) {
-  let numChars = 1;
-  while (numChars <= (inputString.length / 2)) {
-    let substr = inputString.slice(0, numChars);
-    let concatStr = substr;
-    let repeats = 1;
-    while (concatStr.length < inputString.length) {
-      concatStr = substr.repeat(repeats);
-      if (concatStr === inputString) return true;
-      repeats += 1;
+function repeatedSubstringPattern(inputStr) {
+  let substrings = [];
+
+  for (let ind1 = 0; ind1 < inputStr.length - 1; ind1 += 1) {
+    for (let ind2 = ind1 + 1; ind2 < inputStr.length; ind2 += 1) {
+      let substring = inputStr.slice(ind1, ind2);
+      if (substring !== inputStr) {
+        substrings.push(substring);
+      }
     }
-    numChars += 1;
+  }
+
+  for (let substring of substrings) {
+    let newWord = substring;
+    let repeat = 1;
+    while (newWord.length < inputStr.length) {
+      newWord = substring.repeat(repeat);
+      if (newWord === inputStr) return true;
+      repeat += 1;
+    }
   }
   return false;
 }
@@ -67,4 +66,3 @@ console.log(repeatedSubstringPattern("aba") === false);
 console.log(repeatedSubstringPattern("aabaaba") === false);
 console.log(repeatedSubstringPattern("abaababaab") === true);
 console.log(repeatedSubstringPattern("abcabcabcabc") === true);
-console.log(repeatedSubstringPattern("a") === false);

@@ -56,13 +56,14 @@ function commonChars(inputArr) {
         inputArrCopy[ind] = word.replace(charToCompare, "");
       }
     }
+    console.log({inputArrCopy})
   }
   return outputArr;
 }
 
-console.log(commonChars(['a', 'b']));
-console.log(commonChars(['ab', 'bc']));
+// console.log(commonChars(['a', 'b']));
+// console.log(commonChars(['ab', 'bc']));
 console.log(commonChars(["bella", "label", "roller"]));
-console.log(commonChars(["cool", "lock", "cook"]));
-console.log(commonChars(["hello", "goodbye", "booya", "random"]));
-console.log(commonChars(["aabbaaaa", "ccdddddd", "eeffee", "ggrrrrr", "yyyzzz"]));
+// console.log(commonChars(["cool", "lock", "cook"]));
+// console.log(commonChars(["hello", "goodbye", "booya", "random"]));
+// console.log(commonChars(["aabbaaaa", "ccdddddd", "eeffee", "ggrrrrr", "yyyzzz"]));

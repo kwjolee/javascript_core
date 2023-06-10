@@ -1,56 +1,68 @@
-/* 13 minutes
+/*
 
 PROBLEM
 =====
-input : array of integers
+input : array
 output : number
 
 rules:
-output number is the index position of the input array
-  at which the "left sum" is equal to the "right sum"
-  direction sum means all integers to that side of the index, summed
-    does not include the index position's value itself
-empty arrays sum to 0
-if no such index exists, return `-1`
+output number is the index position of the input array where
+  subarray to the left and subarray to the right of that index
+    sum to the same value
+if no such index position can be found
+  return -1
+
+empty subarrays sum to 0;
+
+?? what if multiple index positions are found?
+?? what about empty array inputs
 
 EXAMPLE
 =====
-[1, 2, 3, 4, 3, 2, 1] => 3 :: 1 + 2 + 3 === 3 + 2 + 1
-[20, 10, -80, 10, 10, 14, 35] => 0 :: 0 === 20 + 10 + -80 + 10 + 10 + 14 + 35;
+[1, 2, 3, 4, 3, 2, 1] => 3
+[1, 100, 50, -51, 1, 1] => 1
 
 DATA STRUCTURE
 =====
-arrays
+array : left side subarray
+array : right side subarray
 
 ALGORITHM
 =====
-declare function findEvenIndex with parameter arr
-declare variable `indexVal` and init to 0
-compare subarray to left of `indexVal` (at indexVal 0 this is []) to subarray to right of indexVal
-  if equal, return index value
-  if not, increment index value by 1
-repeat until end of array is reached
-if not already returned, return -1
+declare function findEvenIndex with parameter `inputArr`
 
+iterate through every index position of `inputArr`
+  declare variable `leftSub` and init with left side subarray from current index
+  declare variable `rightSub` and init with right side subarray from current index
+    for both subarrays, do not include the value at current index
+
+  declare variable `leftSum` and init with the sum of values of `leftSub`
+  declare variable `rightSum` and init with the sum of values of `rightSub`
+
+  if `leftSum` and `rightSum` are equal
+    return current index position
+end iteration
+
+return -1
 */
 
-function findEvenIndex(arr) {
-  let indexVal = 0;
-  while (indexVal < arr.length) {
-    let leftArr = arr.slice(0, indexVal);
-    let rightArr = arr.slice(indexVal + 1);
-    let leftSum = leftArr.reduce((acc, val) => acc + val, 0);
-    let rightSum = rightArr.reduce((acc, val) => acc + val, 0);
-    if (leftSum === rightSum) return indexVal;
-    indexVal += 1;
+function findEvenIndex(inputArr) {
+  for (let ind = 0; ind < inputArr.length; ind += 1) {
+    let leftSub = inputArr.slice(0, ind);
+    let rightSub = inputArr.slice(ind + 1);
+
+    let leftSum = leftSub.reduce((acc, val) => acc + val, 0);
+    let rightSum = rightSub.reduce((acc, val) => acc + val, 0);
+
+    if (leftSum === rightSum) return ind;
   }
   return -1;
 }
 
-console.log(findEvenIndex([1, 2, 3, 4, 3, 2, 1]) === 3);
-console.log(findEvenIndex([1, 100, 50, -51, 1, 1]) === 1);
-console.log(findEvenIndex([1, 2, 3, 4, 5, 6]) === -1);
-console.log(findEvenIndex([20, 10, 30, 10, 10, 15, 35]) === 3);
-console.log(findEvenIndex([20, 10, -80, 10, 10, 15, 35]) === 0);
-console.log(findEvenIndex([10, -80, 10, 10, 15, 35, 20]) === 6);
-console.log(findEvenIndex([-1, -2, -3, -4, -3, -2 , -1]) === 3);
+console.log(findEvenIndex([1, 2, 3, 4, 3, 2, 1]));
+console.log(findEvenIndex([1, 100, 50, -51, 1, 1]));
+console.log(findEvenIndex([1, 2, 3, 4, 5, 6]));
+console.log(findEvenIndex([20, 10, 30, 10, 10, 15, 35]));
+console.log(findEvenIndex([20, 10, -80, 10, 10, 15, 35]));
+console.log(findEvenIndex([10, -80, 10, 10, 15, 35, 20]));
+console.log(findEvenIndex([-1, -2, -3, -4, -3, -2, -1]));

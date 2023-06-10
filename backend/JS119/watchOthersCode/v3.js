@@ -1,4 +1,4 @@
-/* 20 minutes
+/*
 
 PROBLEM
 =====
@@ -6,113 +6,85 @@ input : two strings
 output : boolean
 
 rules:
-if there is a substring that appears in both input strings
-  return `true`
-otherwise return `false`
+if there is a substring that occurs in both input strings
+  return true
+if not
+  return false
 
-a valid substring is longer than one letter
-case does not matter
-if one of the input strings is empty, then return `false`
-numerical characters count as valid characters
+only regard substrings that are longer than 1 char long
 
-?? what about whitespaces
+?? is the full string considered a substring of itself // yes
+?? case sensitivity // not sensitive
+?? non alpha characters // all considered chars
+?? spaces // no example covers spaces within string // consider spaces to be chars
 
 EXAMPLE
 =====
-'Something', 'Fun' => `false`
-'Something', 'Home' => `true`
-'' , 'Something' => `false`
+Something, Home => true :: ome
+Something, Fun => false
+Something, "" => false
+"", Something => false
+BANANA, banana => true :: full string
+1234567, 541265 => true :: 12
 
-DATA STRUCTURES
+DATA STRUCTURE
 =====
-arrays
+array : list of valid substrings
 
 ALGORITHM
 =====
-general idea:
-get a list of all valid substrings of the first input string
-get a list of all valid substrings of the second input string
-if there is at least one overlapping substring in both lists
-  return `true`
-otherwise return `false`
+declare function `substringTest` with parameters `inputStr1`, `inputStr2`
 
+if either `inputStr1` or `inputStr2` is less than 2 chars long
+  return false
 
-* helper function :: compare lists
-input : two arrays
-output : boolean
-algorithm:
-iterate through first input array elements
-  check if that element exists in second input array
-    if yes, return `true`
-    if not, move to next element of first input array
-return `false`
+reassign `inputStr1` and `inputStr2` with lowercase forms of themselves
 
-* helpder function :: get list of valid substrings
-input : string
-output : array of substrings
-  valid substring is at least 2 characters long
-algorithm:
-declare empty array
-iterate starting from the first character of input string
-  get all possible substrings using the remaining characters
-    include at least the following character
-      add each substring to array
-  once all possible substrings are acquired
-    drop the first character and repeat with the remaining characters
-return array
+declare variable `substringsInp1` and init with list of valid substrings of `inputStr1` :: helper
 
-* main function
-declare function `substringTest` with parameters `string1`, `string2`
-declare variable `substrings1` and init with list of valid substrings of `string1`
-declare variable `substrings2` and init with list of valid substrings of `string2`
-  => how to get list of valid substrings :: helper function
-check if `substrings1` and `substrings2` have common substring
-  => how to check two lists for common element :: helper function
-if common substring exists
-  return `true`
-otherwise
-  return `false`
+iterate through every `substring` of `substringsInp1`
+  if `substring` occurs in `inputStr2`
+    return true
+end iteration
 
+return false
 */
 
-function substringTest(string1, string2) {
-  // if (string1 === "" || string2 === "") return false;
-  let substrings1 = getSubstrings(string1.toLowerCase());
-  let substrings2 = getSubstrings(string2.toLowerCase());
-  return compareLists(substrings1, substrings2);
-}
+function substringTest(inputStr1, inputStr2) {
+  if (inputStr1.length < 2 || inputStr2.length < 2) return false;
 
-console.log(substringTest('Something', 'Fun') === false);
-console.log(substringTest('Something', 'Home') === true);
-console.log(substringTest('Something', 'Fun') === false);
-console.log(substringTest('Something', '') === false);
-console.log(substringTest('', 'Something') === false);
-console.log(substringTest('BANANA', 'banana') === true);
-console.log(substringTest('test', 'lllt') === false);
-console.log(substringTest('', '') === false);
-console.log(substringTest('1234567', '541265') === true);
+  inputStr1 = inputStr1.toLowerCase();
+  inputStr2 = inputStr2.toLowerCase();
 
-function getSubstrings(string) {
-  let outArray = [];
-  while (string.length > 1) {
-    let chars = string.length;
-    while (chars > 1) {
-      outArray.push(string.slice(0, chars));
-      chars -= 1;
-    }
-    string = string.slice(1);
-  }
-  return outArray;
-}
+  let substringsInp1 = getValidSubstrings(inputStr1);
 
-// console.log(getSubstrings('Home'));
-
-function compareLists(array1, array2) {
-  for (let val of array1) {
-    if (array2.includes(val)) return true;
+  for (let substring of substringsInp1) {
+    if (inputStr2.includes(substring)) return true;
   }
   return false;
 }
 
-// console.log(compareLists([1, 2], [3]));
+console.log(substringTest("supercalifragilisticexpialidocious", "SoundsOfItIsAtrociou"))
 
+/* helper : get list of valid substrings
+input : string
+output : array
+
+return array is list of valid substrings
+must be at least 2 char long
+can include full string as substring
+*/
+
+function getValidSubstrings(string) {
+  let substrings = [];
+  const VALID_LENGTH = 2;
+  for (let ind1 = 0; ind1 < string.length; ind1 += 1) {
+    for (let ind2 = ind1 + 1; ind2 < string.length + 1; ind2 += 1) {
+      let substring = string.slice(ind1, ind2);
+      if (substring.length >= VALID_LENGTH) {
+        substrings.push(substring);
+      }
+    }
+  }
+  return substrings;
+}
