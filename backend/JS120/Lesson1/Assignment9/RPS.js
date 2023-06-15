@@ -124,7 +124,7 @@ const RPSGame = {
   human: createHuman(),
   computer: createComputer(),
   lastWinner: null,
-  round: 0,
+  round: 1,
 
   incrementRound() {
     this.round += 1;
@@ -132,12 +132,25 @@ const RPSGame = {
 
   displayWelcomeMessage() {
     console.clear();
-    console.log('==> Welcome to Rock, Paper, Scissors!');
-    console.log(`==> First to winning ${TARGET_SCORE} rounds wins the game.\n`);
+    console.log('==> Welcome to Rock, Paper, Scissors! And Lizard and Spock.');
+    this.displayRules();
+    console.log(`==> First player to win ${TARGET_SCORE} rounds wins the game.\n`);
+  },
+
+  displayRules() {
+    let allMoves = Object.keys(WINNING_LIST);
+    const MAX_MOVE_LENGTH = Math.max(...allMoves.map(move => move.length));
+    for (let move of allMoves) {
+      let buffer1 = MAX_MOVE_LENGTH - move.length;
+      let wins = WINNING_LIST[move].winsAgainst;
+      let [win1, win2] = [wins[0].toUpperCase(), wins[1].toUpperCase()];
+      let buffer2 = MAX_MOVE_LENGTH - win1.length;
+      console.log(`${move.toUpperCase()} ${" ".repeat(buffer1)}beats ${win1} ${" ".repeat(buffer2)}and ${win2}`);
+    }
   },
 
   displayGoodbyeMessage() {
-    console.log('==> Thanks for playing Rock, Paper, Scissors. Goodbye!');
+    console.log('==> Thanks for playing Rock, Paper, Scissors. And Lizard and Spock. Goodbye!');
   },
 
   displayRoundWinner() {
@@ -146,8 +159,8 @@ const RPSGame = {
     let CPUMove = ALL_MOVES[this.computer.move];
 
     let winner = this.getWinner();
-    console.log(`==> You chose: ${humanMove}`);
-    console.log(`==> The computer chose: ${CPUMove}\n`);
+    console.log(`==> You chose:      ${humanMove}`);
+    console.log(`==> Computer chose: ${CPUMove}\n`);
 
     if (winner === "human") {
       console.log(`==> You won the round!`);
@@ -186,17 +199,25 @@ const RPSGame = {
   },
 
   playAgain() {
-    console.log('==> Would you like to play again? (y/n)');
-    let answer = readline.question();
+    console.log('==> Would you like to play again? (y)es/(n)o');
+    let answer = readline.question().toLowerCase();
+    while (checkInvalidYesNo(answer)) {
+      console.log('==> Invalid response. Would you like to play again? (y)es/(n)o');
+      answer = readline.question().toLowerCase();
+    }
     console.clear();
     return answer.toLowerCase()[0] === 'y';
+
+    function checkInvalidYesNo(replay) {
+      return !["y", "yes", "n", "no"].includes(replay);
+    }
   },
 
   displayScoreboard() {
     let humanScore = this.human.score;
     let computerScore = this.computer.score;
-    console.log(`==> You won ${humanScore} round${humanScore === 1 ? "" : "s"}.`);
-    console.log(`==> Computer won ${computerScore} round${computerScore === 1 ? "" : "s"}.\n`);
+    console.log(`==> You have won:     ${humanScore} round${humanScore === 1 ? "" : "s"}.`);
+    console.log(`==> Computer has won: ${computerScore} round${computerScore === 1 ? "" : "s"}.\n`);
   },
 
   displayGameWinner() {
@@ -208,7 +229,7 @@ const RPSGame = {
     }
   },
 
-  resetGame() {
+  resetScores() {
     this.human.resetScore();
     this.computer.resetScore();
     this.resetRoundNumber();
@@ -218,13 +239,16 @@ const RPSGame = {
     this.round = 1;
   },
 
+  initializeGame() {
+    this.displayWelcomeMessage();
+  },
+
   play() {
+    this.initializeGame();
     do {
-      this.resetGame();
+      this.resetScores();
       do {
-        if (this.round === 1) {
-          this.displayWelcomeMessage();
-        } else {
+        if (this.round > 1) {
           this.displayRoundWinner();
           this.displayScoreboard();
         }
@@ -238,7 +262,7 @@ const RPSGame = {
       this.displayGameWinner();
 
     } while (this.playAgain());
-
+    console.clear();
     this.displayGoodbyeMessage();
   }
 };
