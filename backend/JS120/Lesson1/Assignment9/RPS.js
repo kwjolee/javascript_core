@@ -133,7 +133,6 @@ const RPSGame = {
   displayWelcomeMessage() {
     console.clear();
     console.log('==> Welcome to Rock, Paper, Scissors! And Lizard and Spock.');
-    this.displayRules();
     console.log(`==> First player to win ${TARGET_SCORE} rounds wins the game.\n`);
   },
 
@@ -147,6 +146,7 @@ const RPSGame = {
       let buffer2 = MAX_MOVE_LENGTH - win1.length;
       console.log(`${move.toUpperCase()} ${" ".repeat(buffer1)}beats ${win1} ${" ".repeat(buffer2)}and ${win2}`);
     }
+    console.log();
   },
 
   displayGoodbyeMessage() {
@@ -241,6 +241,7 @@ const RPSGame = {
 
   initializeGame() {
     this.displayWelcomeMessage();
+    this.displayRules();
   },
 
   play() {
