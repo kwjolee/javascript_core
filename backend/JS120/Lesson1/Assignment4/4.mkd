@@ -1,0 +1,1 @@
+In other languages, the data part of the object is shielded from the public and therefore cannot be accessed, while in JavaScript it is not.

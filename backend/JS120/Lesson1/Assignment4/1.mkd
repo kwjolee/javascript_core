@@ -1,0 +1,1 @@
+`Object-Oriented Programming` is a paradigm in programming, in which objects are used as primary means of solving problems. In particular, objects are used to organize the program.

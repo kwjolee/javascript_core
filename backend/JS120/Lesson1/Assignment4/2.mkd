@@ -1,0 +1,3 @@
+The primary advantage of OOP is that it makes maintenance, review, and edits of code much simpler.
+
+The primary disadvantage of OOP is the additional computational cost.
