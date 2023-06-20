@@ -150,6 +150,7 @@ const RPSGame = {
   },
 
   displayGoodbyeMessage() {
+    console.clear();
     console.log('==> Thanks for playing Rock, Paper, Scissors. And Lizard and Spock. Goodbye!');
   },
 
@@ -263,7 +264,6 @@ const RPSGame = {
       this.displayGameWinner();
 
     } while (this.playAgain());
-    console.clear();
     this.displayGoodbyeMessage();
   }
 };
