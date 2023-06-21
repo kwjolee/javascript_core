@@ -10,6 +10,12 @@ const ALL_MOVES = {
   sp: "spock", spock: "spock"
 };
 
+const NAMES = {
+  human: "human",
+  computer: "computer",
+  tie: "tie"
+};
+
 const WINNING_LIST = {
   rock: {winsAgainst: ["lizard", "scissors"], losesAgainst: ["paper", "spock"]},
   paper: {winsAgainst: ["rock", "spock"], losesAgainst: ["scissors", "lizard"]},
@@ -21,16 +27,17 @@ const WINNING_LIST = {
 function createPlayer() {
   return {
     move: null,
-
     score: 0,
+    moveHistory: [],
+
     incrementScore() {
       this.score += 1;
     },
+
     resetScore() {
       this.score = 0;
     },
 
-    moveHistory: [],
     addMove(choice) {
       this.moveHistory.push(choice);
     }
@@ -47,9 +54,12 @@ function createHuman() {
       while (true) {
         console.log('==> Please choose (r)ock, (p)aper, (sc)issors, (l)izard, or (sp)ock:');
         choice = readline.question().toLowerCase();
+
         if (Object.keys(ALL_MOVES).includes(choice)) break;
+
         console.log('==> Sorry, invalid choice.');
       }
+
       choice = ALL_MOVES[choice];
       this.move = choice;
       this.addMove(choice);
@@ -59,66 +69,75 @@ function createHuman() {
   return Object.assign(playerObject, humanObject);
 }
 
+// eslint-disable-next-line max-lines-per-function
 function createComputer() {
   let playerObject = createPlayer();
 
   let computerObject = {
     choose(humanMoves) {
       let choice;
+
       if (this.moveHistory.length === 0) {
         choice = getRandomMove();
       } else {
         choice = getIdealMove(this.moveHistory, humanMoves);
       }
+
       this.move = choice;
       this.addMove(choice);
     },
   };
 
   return Object.assign(playerObject, computerObject);
-}
 
-function getIdealMove(computerMoves, humanMoves) {
-  let weights = getWeights(computerMoves, humanMoves);
-  let randNum = Math.random();
-  let weightSum = 0;
-  for (let move of Object.keys(WINNING_LIST)) {
-    weightSum += weights[move];
-    if (randNum <= weightSum)  {
-      return move;
+  function getIdealMove(computerMoves, humanMoves) {
+    let weights = getWeights(computerMoves, humanMoves);
+    let randNum = Math.random();
+    let weightSum = 0;
+
+    for (let move of Object.keys(WINNING_LIST)) {
+      weightSum += weights[move];
+
+      if (randNum <= weightSum) return move;
     }
-  }
-  return getRandomMove();
-}
 
-function getWeights(computerMoves, humanMoves) {
-  let winCounts = {};
-  for (let ind = 0; ind < computerMoves.length; ind += 1) {
-    let computerMove = computerMoves[ind];
-    let humanMove = humanMoves[ind];
-    if (WINNING_LIST[computerMove].winsAgainst.includes(humanMove)) {
-      winCounts[computerMove] = winCounts[computerMove] + 1 || 1;
+    return getRandomMove();
+  }
+
+  function getWeights(computerMoves, humanMoves) {
+    let winCounts = {};
+
+    for (let ind = 0; ind < computerMoves.length; ind += 1) {
+      let computerMove = computerMoves[ind];
+      let humanMove = humanMoves[ind];
+
+      if (WINNING_LIST[computerMove].winsAgainst.includes(humanMove)) {
+        winCounts[computerMove] = winCounts[computerMove] + 1 || 1;
+      }
     }
+
+    let totalWeight = Object.keys(WINNING_LIST).length;
+    totalWeight += Object.values(winCounts).reduce((acc, val) => acc + val, 0);
+
+    let weights = {};
+    Object.keys(WINNING_LIST).forEach(move => {
+      weights[move] = winCounts[move] + 1 || 1;
+    });
+
+    Object.keys(weights).forEach(move => {
+      weights[move] /= totalWeight;
+    });
+
+    return weights;
   }
-  let totalWeight = Object.keys(WINNING_LIST).length;
-  totalWeight += Object.values(winCounts).reduce((acc, val) => acc + val, 0);
 
-  let weights = {};
-  Object.keys(WINNING_LIST).forEach(move => {
-    weights[move] = winCounts[move] + 1 || 1;
-  });
-
-  Object.keys(weights).forEach(move => {
-    weights[move] /= totalWeight;
-  });
-  return weights;
+  function getRandomMove() {
+    const choices = Object.keys(WINNING_LIST);
+    let randomIndex = Math.floor(Math.random() * choices.length);
+    return choices[randomIndex];
+  }
 }
 
-function getRandomMove() {
-  const choices = Object.keys(WINNING_LIST);
-  let randomIndex = Math.floor(Math.random() * choices.length);
-  return choices[randomIndex];
-}
 
 const RPSGame = {
   human: createHuman(),
@@ -139,6 +158,7 @@ const RPSGame = {
   displayRules() {
     let allMoves = Object.keys(WINNING_LIST);
     const MAX_MOVE_LENGTH = Math.max(...allMoves.map(move => move.length));
+
     for (let move of allMoves) {
       let buffer1 = MAX_MOVE_LENGTH - move.length;
       let wins = WINNING_LIST[move].winsAgainst;
@@ -146,6 +166,7 @@ const RPSGame = {
       let buffer2 = MAX_MOVE_LENGTH - win1.length;
       console.log(`${move.toUpperCase()} ${" ".repeat(buffer1)}beats ${win1} ${" ".repeat(buffer2)}and ${win2}`);
     }
+
     console.log();
   },
 
@@ -159,13 +180,12 @@ const RPSGame = {
     let humanMove = ALL_MOVES[this.human.move];
     let CPUMove = ALL_MOVES[this.computer.move];
 
-    let winner = this.getWinner();
     console.log(`==> You chose:      ${humanMove}`);
     console.log(`==> Computer chose: ${CPUMove}\n`);
 
-    if (winner === "human") {
+    if (this.lastWinner === NAMES.human) {
       console.log(`==> You won the round!`);
-    } else if (winner === "tie") {
+    } else if (this.lastWinner === NAMES.tie) {
       console.log("==> It's a tie");
     } else {
       console.log(`==> Computer won the round!`);
@@ -173,40 +193,36 @@ const RPSGame = {
   },
 
   updateScores() {
-    let winner = this.getWinner();
-
-    if (winner === "human") {
+    if (this.lastWinner === NAMES.human) {
       this.human.incrementScore();
-      this.lastWinner = "human";
-    } else if (winner === "tie") {
-      this.lastWinner = null;
-    } else {
+    } else if (this.lastWinner === NAMES.computer) {
       this.computer.incrementScore();
-      this.lastWinner = "computer";
     }
   },
 
-  getWinner() {
+  determineWinner() {
     let humanMove = ALL_MOVES[this.human.move];
     let CPUMove = ALL_MOVES[this.computer.move];
 
     if (WINNING_LIST[CPUMove].losesAgainst.includes(humanMove)) {
-      return "human";
+      this.lastWinner = NAMES.human;
     } else if (WINNING_LIST[CPUMove].winsAgainst.includes(humanMove)) {
-      return "computer";
+      this.lastWinner = NAMES.computer;
     } else {
-      return "tie";
+      this.lastWinner = NAMES.tie;
     }
   },
 
   playAgain() {
     console.log('==> Would you like to play again? (y)es/(n)o');
     let answer = readline.question().toLowerCase();
+
     while (checkInvalidYesNo(answer)) {
       console.log('==> Invalid response. Would you like to play again? (y)es/(n)o');
       answer = readline.question().toLowerCase();
     }
     console.clear();
+
     return answer.toLowerCase()[0] === 'y';
 
     function checkInvalidYesNo(replay) {
@@ -223,14 +239,15 @@ const RPSGame = {
 
   displayGameWinner() {
     let winner = this.lastWinner;
-    if (winner === "human") {
+
+    if (winner === NAMES.human) {
       console.log("==> You won the game!");
     } else {
       console.log("==> Computer won the game!");
     }
   },
 
-  resetScores() {
+  resetGame() {
     this.human.resetScore();
     this.computer.resetScore();
     this.resetRoundNumber();
@@ -245,10 +262,14 @@ const RPSGame = {
     this.displayRules();
   },
 
+  reachedTargetScore() {
+    return !(Math.max(this.human.score, this.computer.score) < TARGET_SCORE);
+  },
+
   play() {
     this.initializeGame();
     do {
-      this.resetScores();
+      this.resetGame();
       do {
         if (this.round > 1) {
           this.displayRoundWinner();
@@ -256,9 +277,10 @@ const RPSGame = {
         }
         this.human.choose();
         this.computer.choose(this.human.moveHistory);
+        this.determineWinner();
         this.updateScores();
         this.incrementRound();
-      } while (Math.max(this.human.score, this.computer.score) < TARGET_SCORE);
+      } while (!this.reachedTargetScore());
 
       this.displayRoundWinner();
       this.displayGameWinner();
