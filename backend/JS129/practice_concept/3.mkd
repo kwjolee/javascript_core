@@ -1,0 +1,3 @@
+3. Describe the concept of polymorphism in OOP and provide an example.
+
+Answer: Polymorphism allows objects of different classes to be treated as instances of a common superclass. For example, in a shape hierarchy, both Rectangle and Circle classes can inherit from a common Shape class and override a draw() method to provide their specific implementation.

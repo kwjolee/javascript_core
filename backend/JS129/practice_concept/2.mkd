@@ -1,0 +1,3 @@
+2. What is the difference between prototypal and pseudo-classical inheritance?
+
+Answer: Prototypal inheritance relies on the prototype chain, where objects inherit properties and methods directly from other objects. Pseudo-classical inheritance simulates class-based inheritance using constructor functions and the new keyword.

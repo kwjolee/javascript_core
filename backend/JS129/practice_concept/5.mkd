@@ -1,0 +1,3 @@
+5. What is the difference between instance and static methods in OOP?
+
+Answer: Instance methods are defined on object instances and operate on specific instance data. Static methods, on the other hand, are defined on the class itself and do not have access to instance-specific data. They are commonly used for utility functions or operations that don't depend on instance state.

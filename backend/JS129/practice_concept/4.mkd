@@ -1,0 +1,3 @@
+4. Explain the concept of collaboration objects in OOP and provide an example.
+
+Answer: Collaboration objects refer to objects working together by exchanging data or interacting with each other's properties and methods. For example, in a bookstore system, a Book object collaborates with an Author object to retrieve and display the author's information.

@@ -1,0 +1,3 @@
+6. Describe the concept of single vs multiple inheritance in OOP.
+
+Answer: Single inheritance refers to a class inheriting from a single parent class, whereas multiple inheritance allows a class to inherit from multiple parent classes. JavaScript supports single inheritance through prototypal inheritance but does not directly support multiple inheritance.

@@ -1,0 +1,144 @@
+1. Explain the concept of encapsulation in OOP and provide an example.
+
+Encapsulation is the concept of containing the states and the behaviors of a single into one place. In JavaScript, this means that the properties and the methods are contained within the same object that needs them. Here is a code example:
+
+```
+let person = {
+	name: "John",
+	introduce() {
+		console.log(`Hi, my name is ${this.name}.`);
+	}
+}
+// state : name
+// behavior : introduce
+```
+
+
+2. What is the difference between prototypal and pseudo-classical inheritance?
+
+Prototypal inheritance relies on the concept of prototypes, where properties and methods are shared among objects through the prototype chain. A prototype is simply another object that contains those shared properties and methods. One object can be a prototype of an object, which itself can be a prototype of another object.
+
+Pseudo-classical inheritance mimics the more classical inheritance behavior by the use of constructor functions and Classes. A constructor function or a class has a `prototype` property which contains all the properties and behaviors that are to be shared by its instances. Here, instance refers to the objects that are created by the constructor function or class using the `new` keyword.
+
+Ultimately, both prototypal and pseudo-classical inheritance in JavaScript use the prototype chain.
+
+
+3. Describe the concept of polymorphism in OOP and provide an example.
+
+Polymorphism refers to object of different types being able to respond to the same method invocation, where the methods have the same name but behave differently. There are two ways to achieve polymorphism. One is through inheritance and method overriding. A superclass can have two different subclasses. One of those subclasses may use the same `sayHi` method that it inherits from the superclass, while the other subclass may use a slightly different version of it. Instances of both of these subclasses can still use the `sayHi` method, and since the methods are of the same names, JavaScript will run the appropriate versions of those methods.
+
+```
+class Person {
+  hi() {
+    console.log("waves hand");
+  }
+}
+
+class American extends Person {
+  hi() { // overrides hi method of Person
+    console.log("Hello");
+  }
+}
+
+class Chinese extends Person {
+  hi() { // overrides hi method of Person
+    console.log("Ni Hao");
+  }
+}
+
+class CaveMan extends Person {}
+
+let people = [new American(), new Chinese(), new CaveMan()];
+people.forEach(person => person.hi());
+```
+
+Here, the `hi` method is being overriden in the `American` and `Chinese` subclasses, but not in the `CaveMan` subclass. When instances of `American` and `Chinese` classes call the `hi` method, they behave differently from each other and from the same method call on an instance of the `CaveMan` subclass, which remains the same as the one in the `Person` superclass.
+
+Another way of achieving polymorphism is through Duck Typing. Two different objects of two different types may have methods with the same names. As long as their invocation syntax are identical (method name, number of arguments), both instances can call the same method.
+
+```
+class Airplane {
+  message() {
+    console.log("I'm on a plane");
+  }
+}
+
+class Car {
+  message() {
+    console.log("I'm in a car");
+  }
+}
+
+class Bicycle {
+  message() {
+    console.log("I'm on a bike");
+  }
+}
+
+const transport = [new Airplane(), new Car(), new Bicycle()];
+transport.forEach(mode => mode.message()); // iterates through all elements. doesn't care about the type, executes message() anyway
+
+class Train {
+  message() {
+    console.log("I'm on a train");
+  }
+}
+
+transport.push(new Train()); // we can add another element
+transport.forEach(mode => mode.message()); // exact same forEach call, still doesn't care about the type, executes message()
+```
+
+Here, classes of different types all happen to have the same method, `message`. Their instances can all call the `message` method.
+
+
+4. Explain the concept of collaboration objects in OOP and provide an example.
+
+Collaborator objects are simply objects that provide state within another object. They help the programmer divide the problem into multiple pieces, and make it easier to abstract the problem. Here is an example:
+
+```
+let metroid = {
+  name: 'Prime',
+  age: undefined
+};
+
+let sam = {
+  name: 'Samus',
+  pet: metroid,
+
+  introduce() {
+    console.log(`My name is ${this.name}!`);
+    console.log(`My pet's name is ${this.pet.name}.`);
+  }
+};
+
+// metroid object is sam object's collaborator
+```
+
+In this example, Samus has a pet named Prime. Information about Prime is contained in its own object named `metroid`. So in the `sam` object, its `pet` information is not contained directly in it, but rather in the collaborator object `metroid`.
+
+
+5. What is the difference between instance and static methods in OOP?
+
+Instance methods are methods that the instances of the class inherit. Static methods are methods that are defined directly on the class. All instances of the class share the same list of instance methods. These methods can be called directly on the instances in the form of `instanceName.instanceMethodName()`. The class must be called directly to invoke static methods, in the form of `className.staticMethodName()`. Generally, static methods return information or invoke functions that are specific to the class itself, while instance methods are specific to the instances.
+
+
+6. Describe the concept of single vs multiple inheritance in OOP.
+
+Single inheritance means that the instance of a class inherits only from that class. Multiple inheritance means that an instance is able to inherit from multiple different classes. In JavaScript, multiple inheritance is not supported. One way to emulate this is to use mix-ins. 
+
+7. Explain the concept of mix-ins in OOP and how they differ from inheritance.
+
+With mix-ins, a prototype object is defined outside of the class. This object contains the properties and methods that are to be "mixed-in" to another prototype object. The instances of the class inherit directly from the class. Mix-ins then add the additional properties and methods directly onto those instances, or to the class' `prototype` property. When using mix-ins, prototypal delegation does not come into play. The properties and methods in the mix-in object are directly copied to the target prototype object.
+
+8. Describe the concept of method and property lookup sequence in OOP.
+
+Thanks to the prototype chain, objects in JavaScript can access properties and methods that are not defined directly on the objects themselves. When a certain property is attempted to be accessed, JavaScript first looks in the object itself. If the property does not exist there, then it looks in the object's prototype. If the property exists there, then the value is returned and the search ends. If it does not exist there, then it looks in its prototype. This chain continues until the default prototype is reached, which is the `prototype` property of `Object`. If it still is not found there, then `undefined` is returned.
+
+
+9. Explain the concept of the execution context and this in JavaScript.
+
+The execution context is the context in which functions are invoked. It does not depend on where the function is defined, where the function is invoked, or when the function is invoked. It only depends on how the function is invoked. Any ordinary function invocation has an execution context of the `global` object. Any method invocation has an execution context of the calling object. This means that within the function, the value of `this` points to those execution contexts depending on how it is invoked. There are ways to bind the execution context on a function invocation.
+
+10. What are the differences between call, apply, and bind in JavaScript?
+
+By using `call`, `apply`, or `bind` methods. `call` and `apply` methods accept an execution context as its argument and invokes the function that way. This means that the value of `this` in that particular occurrence of the function invocation will point to the passed argument. `bind` returns a new function which permanently binds the value of `this` in that function to the passed argument.

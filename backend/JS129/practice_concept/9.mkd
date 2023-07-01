@@ -1,0 +1,3 @@
+9. Explain the concept of the execution context and this in JavaScript.
+
+Answer: The execution context in JavaScript refers to the environment in which code is executed. The this keyword within a function refers to the context object that the function is being called on. It allows access to the object's properties and methods.

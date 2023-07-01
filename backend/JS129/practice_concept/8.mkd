@@ -1,0 +1,3 @@
+8. Describe the concept of method and property lookup sequence in OOP.
+
+Answer: Method and property lookup sequence refers to the order in which JavaScript searches for methods and properties in the prototype chain. It starts with the object itself and follows the chain of prototypes until it finds the desired method or property.

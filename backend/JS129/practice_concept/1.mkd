@@ -1,0 +1,3 @@
+1. Explain the concept of encapsulation in OOP and provide an example.
+
+Answer: Encapsulation is the bundling of data and related behavior within an object. It allows for data hiding and abstraction. For example, a BankAccount object encapsulates the account balance and provides methods like deposit() and withdraw() to interact with the balance.

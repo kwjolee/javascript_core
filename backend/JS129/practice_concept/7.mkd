@@ -1,0 +1,3 @@
+7. Explain the concept of mix-ins in OOP and how they differ from inheritance.
+
+Answer: Mix-ins are a way to add functionality to classes without using inheritance. They are reusable pieces of code that can be "mixed in" to multiple classes, allowing them to acquire the shared behavior. Mix-ins promote code reuse and composition over inheritance.

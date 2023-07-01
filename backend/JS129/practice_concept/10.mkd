@@ -1,0 +1,3 @@
+10. What are the differences between call, apply, and bind in JavaScript?
+
+Answer: call and apply are methods that allow you to invoke a function with a specified this value and arguments. The difference is in how you pass the arguments: call accepts arguments individually, while apply accepts them as an array. bind is a method that returns a new function with a bound this value, allowing you to invoke it later with the specified context.
