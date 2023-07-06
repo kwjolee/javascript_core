@@ -1,4 +1,3 @@
-// eslint-disable-next-line max-lines-per-function
 function createGreeter(name) {
   return {
     name: name,
@@ -9,13 +8,13 @@ function createGreeter(name) {
       let msg = '';
       switch (timeOfDay) {
         case 'morning':
-          msg += `${this.morning} ${name}`;
+          msg += `${this.morning} ${this.name}`;
           break;
         case 'afternoon':
-          msg += `${this.afternoon} ${name}`;
+          msg += `${this.afternoon} ${this.name}`;
           break;
         case 'evening':
-          msg += `${this.evening} ${name}`;
+          msg += `${this.evening} ${this.name}`;
           break;
       }
 
@@ -26,8 +25,5 @@ function createGreeter(name) {
 
 let helloVictor = createGreeter('Victor');
 helloVictor.greet('morning');
-// Good Morning Victor
-
-/*
-
-*/
+helloVictor.name = "Greg";
+helloVictor.greet('morning');

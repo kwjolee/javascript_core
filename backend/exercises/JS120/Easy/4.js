@@ -6,13 +6,13 @@ class Pet {
 }
 
 class Cat extends Pet {
-  constructor(name, age, color) {
+  constructor(name, age, fur) {
     super(name, age);
-    this.color = color;
+    this.fur = fur;
   }
 
   info() {
-    return `My cat ${this.name} is ${this.age} years old and has ${this.color} fur.`;
+    return `My cat ${this.name} is ${this.age} years old and has ${this.fur} fur.`;
   }
 }
 
@@ -21,4 +21,3 @@ let butterscotch = new Cat('Butterscotch', 10, 'tan and white');
 
 console.log(pudding.info());
 console.log(butterscotch.info());
-

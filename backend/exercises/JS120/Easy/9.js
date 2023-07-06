@@ -1,3 +1,9 @@
+const walkMixin = {
+  walk() {
+    return `${this.name} ${this.gait()} forward`;
+  }
+};
+
 class Person {
   constructor(name) {
     this.name = name;
@@ -28,15 +34,9 @@ class Cheetah {
   }
 }
 
-const walkMixIn = {
-  walk() {
-    return `${this.name} ${this.gait()} forward`;
-  }
-};
-
-Object.assign(Person.prototype, walkMixIn);
-Object.assign(Cat.prototype, walkMixIn);
-Object.assign(Cheetah.prototype, walkMixIn);
+Object.assign(Person.prototype, walkMixin);
+Object.assign(Cat.prototype, walkMixin);
+Object.assign(Cheetah.prototype, walkMixin);
 
 let mike = new Person("Mike");
 console.log(mike.walk());

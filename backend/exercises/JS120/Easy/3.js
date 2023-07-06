@@ -7,9 +7,7 @@ class Cat {
   }
 }
 
-
-let fakeCat = {}; // your implementation
-Object.setPrototypeOf(fakeCat, Cat.prototype);
+let fakeCat = Object.create(Cat.prototype);
 
 console.log(fakeCat instanceof Cat); // logs true
 console.log(fakeCat.name);           // logs undefined

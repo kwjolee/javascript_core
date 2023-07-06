@@ -15,9 +15,8 @@ class Cat extends Animal {
   constructor(name, age, status) {
     super(name, age, 4, "cat", status);
   }
-
   introduce() {
-    return Animal.prototype.introduce.call(this) + " Meow meow!";
+    return super.introduce() + " Meow meow!";
   }
 }
 
@@ -26,7 +25,6 @@ class Dog extends Animal {
     super(name, age, 4, "dog", status);
     this.master = master;
   }
-
   greetMaster() {
     return `Hello ${this.master}! Woof, woof!`;
   }
@@ -35,7 +33,3 @@ class Dog extends Animal {
 let cat = new Cat("Pepe", 2, "happy");
 console.log(cat.introduce() === "Hello, my name is Pepe and I am 2 years old and happy. Meow meow!");
 // logs true
-
-let dog = new Dog("Charlie", 5, "grumpy");
-console.log(dog.introduce());
-console.log(dog.greetMaster());

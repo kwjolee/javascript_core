@@ -7,6 +7,7 @@ class Vehicle {
   info() {
     return `${this.make} ${this.model}`;
   }
+
 }
 
 class Car extends Vehicle {

@@ -1,3 +1,4 @@
+
 class Person {
   greeting(text) {
     console.log(text);
